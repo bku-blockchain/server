@@ -169,6 +169,7 @@
         "Modernizr": true,
         "Promise": true,
         "__TESTING__": true,
-        "ApplicationConfiguration": true
+        "ApplicationConfiguration": true,
+        "artifacts": true
     }
 }

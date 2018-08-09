@@ -10,8 +10,8 @@
   },
   "scripts": {
     "start": "node index",
-    "eslint": "node_modules/.bin/eslint ./",
-    "eslint:fix": "node_modules/.bin/eslint ./ --fix"
+    "lint": "node_modules/.bin/eslint ./",
+    "lint:fix": "node_modules/.bin/eslint ./ --fix"
   },
   "dependencies": {
     "async": "^2.6.0",
@@ -37,7 +37,9 @@
     "lodash": "^4.17.5",
     "mongoose": "^5.2.7",
     "morgan": "~1.9.0",
-    "nodemailer": "^4.6.7"
+    "nodemailer": "^4.6.7",
+    "truffle-contract": "1.1.11",
+    "web3": "0.20.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
