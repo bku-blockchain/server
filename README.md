@@ -4,6 +4,7 @@
 ```
 npm install -g truffle
 npm install -g ganache-cli
+npm install -g solium
 ```
 
 ## Compile smart contract
