@@ -33,7 +33,12 @@ const UserSchema = new Schema({
     type: String,
     default: ''
   },
-  salt: String
+  salt: String,
+  eth: {
+    address: {
+      type: String
+    }
+  }
 }, {
   timestamps: {
     createdAt: 'createdAt',
