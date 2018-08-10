@@ -10,10 +10,12 @@
   },
   "scripts": {
     "start": "node index",
-    "lint": "node_modules/.bin/eslint ./",
-    "lint:fix": "node_modules/.bin/eslint ./ --fix",
-    "lint:sol": "solium -d contracts/",
-    "lint:sol:fix": "solium -d contracts/ --fix"
+    "lint": "eslint ./",
+    "lint:fix": "eslint ./ --fix",
+    "lint:sol": "solium -d ./",
+    "lint:sol:fix": "solium -d ./ --fix",
+    "lint:all": "npm run lint && npm run lint:sol",
+    "lint:all:fix": "npm run lint:fix && npm run lint:sol:fix"
   },
   "dependencies": {
     "async": "^2.6.0",
@@ -50,7 +52,10 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.6.1",
-    "solium-plugin-security": "^0.1.1"
+    "ganache-cli": "^6.1.6",
+    "solium": "^1.1.8",
+    "solium-plugin-security": "^0.1.1",
+    "truffle": "^4.1.13"
   },
   "author": {
     "name": "huynhsamha",
