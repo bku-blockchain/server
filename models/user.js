@@ -22,13 +22,6 @@ const UserSchema = new Schema({
     trim: true,
     default: ''
   },
-  username: {
-    type: String,
-    unique: 'Username already exists',
-    required: 'Please fill in a username',
-    lowercase: true,
-    trim: true
-  },
   password: {
     type: String,
     default: ''
