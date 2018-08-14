@@ -18,10 +18,9 @@ const transporter = nodemailer.createTransport({
 });
 
 export function createUser(req, res, next) {
-  const { email, password } = req.body;
-  const user = new User({ email, password });
+  const { email, password, role, eth } = req.body;
+  const user = new User({ email, password, role, eth });
   user.id = user._id.toString();
-  console.log(user);
   user.save().then(user => res.send(user)).catch((err) => {
     console.log(err);
     return res.send(err);
@@ -82,7 +81,6 @@ export const login = (req, res, next) => {
 export const forgotPassword = async (req, res, next) => {
   // TODO
   const { email } = req.body;
-  console.log(email);
   res.status(200).send({ message: 'Email has been sent.' });
   // res.status(400).send({message: 'Account connected the email is\'t existen'});
 };

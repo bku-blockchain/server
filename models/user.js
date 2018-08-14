@@ -27,6 +27,10 @@ const UserSchema = new Schema({
     default: ''
   },
   salt: String,
+  role: {
+    enum: ['Attender', 'Organizer', 'Admin'],
+    default: 'Attender'
+  },
   eth: {
     address: {
       type: String
