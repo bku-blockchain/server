@@ -13,5 +13,6 @@ mongoose.connect(db.uriMongo, (err) => {
   require('../models');
 
   // Start server ExpressJS
-  require('./fake');
+  require('./fake-user');
+  // require('./fake-poll');
 });

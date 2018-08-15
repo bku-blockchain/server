@@ -5,7 +5,9 @@ const Poll = mongoose.model('Poll');
 
 export const findAll = async (req, res, next) => {
   // TODO - Make Restful API
-  Poll.find().exec().then(polls => res.status(203).send({ data: polls }))
+  Poll.find().exec().then((polls) => {
+    res.status(203).send(polls);
+  })
     .catch((err) => {
       console.log(err);
       res.status(500).send({ message: err.message });
