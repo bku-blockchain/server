@@ -15,7 +15,8 @@
     "lint:sol": "solium -d ./",
     "lint:sol:fix": "solium -d ./ --fix",
     "lint:all": "npm run lint && npm run lint:sol",
-    "lint:all:fix": "npm run lint:fix && npm run lint:sol:fix"
+    "lint:all:fix": "npm run lint:fix && npm run lint:sol:fix",
+    "db:fake": "node scripts"
   },
   "dependencies": {
     "async": "^2.6.0",

@@ -28,6 +28,7 @@ const UserSchema = new Schema({
   },
   salt: String,
   role: {
+    type: String,
     enum: ['Attender', 'Organizer', 'Admin'],
     default: 'Attender'
   },
