@@ -21,3 +21,6 @@ ganache-cli
 ```
 truffle migrate
 ```
+
+## Document Web3 version 1.0
+https://web3js.readthedocs.io/en/1.0
