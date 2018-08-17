@@ -10,8 +10,12 @@ const PollSchema = new Schema({
       sparse: true
     }
   },
-  eventID: String,
-  ownerID: String,
+  eventID: {
+    type: String
+  },
+  ownerID: {
+    type: String
+  },
   title: {
     type: String,
     required: 'Please fill in a title for poll'
@@ -27,22 +31,38 @@ const PollSchema = new Schema({
     type: Date,
     required: 'Please choose a end date'
   },
-  maxSelected: {
-    type: Number,
-    default: 1
-  },
-  options: [{
-    id: {
-      type: String,
-      require: true
+  questions: [{
+    // Ordinal of question in a poll
+    ordinal: {
+      type: Number,
+      required: 'Please add oridinal for question'
     },
-    name: {
+    title: {
       type: String,
-      require: 'Please fill a name for option'
+      required: 'Please fill in a title for question'
     },
-    description: {
-      type: String
-    }
+    type: {
+      type: String,
+      enum: ['Rating', 'Polling'],
+      required: 'Please choose type for question, Rating or Polling'
+    },
+    maxSelected: {
+      type: Number, // only for Polling type
+      default: 1
+    },
+    /**
+     * Use for both Rating and Polling
+     */
+    options: [{
+      ordinal: {
+        type: Number,
+        required: 'Please order your options in question'
+      },
+      name: {
+        type: String,
+        required: 'Please fill a name for option'
+      }
+    }]
   }],
   eth: {
     address: String,

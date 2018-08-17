@@ -51,7 +51,7 @@ export const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findOne({ email }).exec().then((user) => {
     if (!user) {
-      return res.status(404).send({ message: 'No user exists wich such email.' });
+      return res.status(404).send({ message: 'No user exists with such email.' });
     }
     if (!user.authenticate(password)) {
       return res.status(401).send({ message: 'Password is not correct.' });

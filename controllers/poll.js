@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 const Poll = mongoose.model('Poll');
 
-
 export const findAll = async (req, res, next) => {
   // TODO - Make Restful API
   Poll.find().exec().then((polls) => {
