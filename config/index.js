@@ -1,7 +1,9 @@
-import db from './db';
-import app from './app';
+const db = require('./db');
+const app = require('./app');
+const eth = require('./eth');
 
-export {
+module.exports = {
   db,
-  app
+  app,
+  eth
 };
