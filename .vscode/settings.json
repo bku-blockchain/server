@@ -3,7 +3,7 @@
     // sol we need to config with this file as override
     "solidity.soliumRules": {
       "error-reason": "off",
-      "indentation": ["error", 2],
+      "indentation": ["error", 4],
       "max-len": ["error", 200],
       "no-constant": ["error"],
       "no-empty-blocks": "off",

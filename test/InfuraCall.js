@@ -8,6 +8,7 @@ const cryptoJS = require('crypto-js');
 const config = require('../config');
 
 const web3 = new Web3(new Web3.providers.HttpProvider(config.eth.provider));
+console.log(config.eth.provider);
 
 /** Contract compiled by `truffle compile` */
 const ballotContractJSON = require('../build/contracts/Ballot.json');

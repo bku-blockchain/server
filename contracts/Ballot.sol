@@ -1,6 +1,7 @@
 pragma solidity ^0.4.0;
-contract Ballot {
 
+contract Ballot {
+    
     struct Voter {
         uint weight;
         bool voted;
