@@ -11,7 +11,7 @@ router.post('/forgot', AuthCtrl.forgotPassword);
 router.post('/create', AuthCtrl.createUser);
 
 /** Other routes require token from user */
-router.use('/', AuthCtrl.authorization);
+// router.use('/', AuthCtrl.authorization);
 
 router.post('/reset', AuthCtrl.resetPassword);
 router.post('/logout', AuthCtrl.logout);

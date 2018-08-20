@@ -1,155 +1,104 @@
 pragma solidity ^0.4.17;
 
 contract Polling {
-
+    
     address owner;
-
-    bytes32 id;
-    bytes32[] optionIDs;
-    uint maxSelected;
+    bytes32 secretKey;
+    
     uint startDate;
     uint endDate;
-
-    struct Voter {
-        address addr;
-        bytes32 userID;
-        bytes32[] optionIDs;
+    
+    struct Vote {
+        bytes32 hashValue;
+        bool used;
     }
-
-    uint totalVotes; // total vote from voter
-
-    Voter[] voters; // index-0
-    mapping (address => uint) mVoters; // index-1, default is 0
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Only owner can access");
+    
+    mapping(bytes32 => Vote) voters;
+    uint numVoters;
+    
+    
+    /** 
+     * Events - Name is used as a sentence
+     */
+    event VotingCreated(uint numVoters, bytes32 uid, bytes32 hashValue);
+    event TimeForVotingChanged(uint startDate, uint endDate);
+    
+    
+    /** 
+     * Modifiers
+     */
+    modifier shouldBeValidContract(uint _startDate, uint _endDate) {
+        require(
+            _startDate < _endDate && _endDate > now, 
+            "Should have time for voting"
+        );
         _;
     }
 
-    constructor(bytes32 _id, bytes32[] _optionIDs, uint _maxSelected, uint _startDate, uint _endDate) public {
+    modifier shouldBeOwner() {
+        require(msg.sender == owner, "Only owner can do");
+        _;
+    }
+    
+    modifier shouldBeAuthorized(bytes32 _secretKey) {
+        require(_secretKey == secretKey, "Don't have an authorization");
+        _;
+    }
+    
+    modifier shouldBeValidTime() {
+        require(now >= startDate, "It's not time for voting");
+        require(now <= endDate, "It's too late for voting");
+        _;
+    }
+    
+    modifier shouldBeValidUser(bytes32 uid) {
+        require(voters[uid].used == false, "The user used to vote");
+        _;
+    }
+    
+    
+    /** 
+     * Functions - Transaction methods
+     */
+    constructor(bytes32 _secretKey, uint _startDate, uint _endDate) public
+        shouldBeValidContract(_startDate, _endDate)
+    {
         owner = msg.sender;
-        id = _id;
-        optionIDs = _optionIDs;
-        maxSelected = _maxSelected;
+        secretKey = _secretKey;
         startDate = _startDate;
         endDate = _endDate;
     }
-
-    /**
-    * Unique items of an array of bytes32
-    * Return array of unique items
-    * @param arr array of bytes32 should be uniqued
-    */
-    function uniqueArrayOfBytes32(bytes32[] arr) public returns (bytes32[]) {
-        bytes32[] res;
-        for (uint i = 0; i < arr.length; i++) {
-            bool existen = false;
-            for (uint j = 0; j < res.length; j++) {
-                if (arr[i] == res[j]) {
-                    existen = true;
-                    break;
-                }
-            }
-            if (!existen) res.push(arr[i]);
-        }
-        return res;
-    }
-
-    /**
-    * Filter items of an array of bytes32 which each item
-    * should be valid in a pattern array.
-    * Return array of items which each item is existen in pattern array
-    * @param pattern origin array
-    * @param arr array of bytes32 should be filtered
-    */
-    function filterValidValuesArrayOfBytes32(bytes32[] pattern, bytes32[] arr) public returns (bytes32[]) {
-        bytes32[] res;
-        for (uint i = 0; i < arr.length; i++) {
-            bool valid = false;
-            for (uint j = 0; j < pattern.length; j++) {
-                if (arr[i] == pattern[j]) {
-                    valid = true;
-                    break;
-                }
-            }
-            if (valid) res.push(arr[i]);
-        }
-        return res;
-    }
-
-    modifier shouldBeInValidTerm() {
-        require(
-            now >= startDate && now <= endDate, 
-            "Now is not valid time for voting"
-        );
-        _;
-    }
-
-    modifier shouldBeNewVoter() {
-        require(
-            mVoters[msg.sender] == 0,
-            "Voter is existen"
-        );
-        _;
-    }
-
-    modifier shouldBeUniqueOptionIDs(bytes32[] _optionIDs) {
-        require(
-            uniqueArrayOfBytes32(_optionIDs).length == optionIDs.length,
-            "Option IDs should be unique"
-        );
-        _;
-    }
-
-    modifier shouldBeValidOptionIDs(bytes32[] _optionIDs) {
-        require(
-            filterValidValuesArrayOfBytes32(optionIDs, _optionIDs).length == optionIDs.length,
-            "Option IDs should be valid"
-        );
-        _;
-    }
-
-    modifier shouldBeInLimitSelectedOptionIDs(bytes32[] _optionIDs) {
-        require(
-            _optionIDs.length <= maxSelected,
-            "Selected options exceeds the limit");
-        _;
-    }
-
-    /**
-    * Function: Transaction
-    */
-    function vote(bytes32 _userID, bytes32[] _optionIDs) public
-        shouldBeInValidTerm()
-        shouldBeNewVoter()
-        shouldBeUniqueOptionIDs(optionIDs)
-        shouldBeValidOptionIDs(optionIDs)
-        shouldBeInLimitSelectedOptionIDs(_optionIDs) 
+    
+    function createVoting(bytes32 _secretKey, bytes32 uid, bytes32 hashValue) public
+        shouldBeOwner()
+        shouldBeAuthorized(_secretKey)
+        shouldBeValidTime()
+        shouldBeValidUser(uid)
     {
-        voters.push(Voter(msg.sender, _userID, _optionIDs));
-        mVoters[msg.sender] = voters.length;
-        totalVotes += _optionIDs.length;
+        numVoters++;
+        voters[uid] = Vote(hashValue, true);
+        emit VotingCreated(numVoters, uid, hashValue);
     }
-
-
+    
+    function changeTimeForVoting(bytes32 _secretKey, uint _startDate, uint _endDate) public
+        shouldBeOwner()
+        shouldBeAuthorized(_secretKey)
+        shouldBeValidContract(_startDate, _endDate) 
+    {
+        startDate = _startDate;
+        endDate = _endDate;
+        emit TimeForVotingChanged(startDate, endDate);
+    }
+    
     /**
-    * Functions: Message Call
-    */
-    function getTotalVotes() public view returns (uint) {
-        return totalVotes;
+     * Getter functions, Call methods
+     * Use keyword 'public view', use prefix 'get'
+     */
+    function getTimeForVoting() public view returns (uint, uint, uint) {
+        return (startDate, endDate, now);
     }
-
-    function getNumOfVoter() public view returns (uint) {
-        return voters.length;
-    }
-
-    function getTotalVoteOfOption(bytes32 _optionID) public view returns (uint) {
-        uint res = 0;
-        for (uint i = 0; i < voters.length; i++) {
-            for (uint j = 0; j < voters[i].optionIDs.length; j++) {
-                if (voters[i].optionIDs[j] == _optionID) res++;
-            }
-        }
-        return res;
+    
+    function getNumVoter() public view returns (uint) {
+        return numVoters;
     }
 }

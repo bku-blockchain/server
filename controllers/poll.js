@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+import * as EthCtrl from './eth.local';
+// import * as EthCtrl from './eth.prod';
+
+import config from '../config';
+
 const Poll = mongoose.model('Poll');
 
 export const findAll = async (req, res, next) => {
@@ -13,12 +18,28 @@ export const findAll = async (req, res, next) => {
     });
 };
 
-export const create = async (req, res, next) => {
-  // TODO
-  const { data } = req.body;
+export const create = (req, res, next) => {
+  const data = req.body;
+  console.log(data);
+  // TODO: check ${data} for validation
+
   const poll = new Poll(data);
   poll.id = poll._id.toString();
-  poll.save().then(poll => res.status(200).send(poll))
+
+  poll.save().then((poll) => {
+    poll.eth.contractSecretKey = undefined;
+    res.status(200).send(poll);
+
+    EthCtrl.deployContract({
+      pollID: poll.id,
+      startDate: new Date(poll.startDate).getTime() / 1000,
+      endDate: new Date(poll.endDate).getTime() / 1000
+    }).then((result) => {
+      console.log('Eth deploy conteact');
+      console.log(result);
+    });
+
+  })
     .catch((err) => {
       console.log(err);
       res.status(500).send({ message: err.message });

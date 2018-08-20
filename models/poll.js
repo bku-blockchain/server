@@ -65,8 +65,10 @@ const PollSchema = new Schema({
     }]
   }],
   eth: {
-    address: String,
-    owner: String
+    contractAddress: String,
+    txHash: String,
+    ownerAddress: String,
+    contractSecretKey: String
   }
 }, {
   timestamps: {
