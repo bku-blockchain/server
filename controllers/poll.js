@@ -3,8 +3,6 @@ import mongoose from 'mongoose';
 import * as EthCtrl from './eth.local';
 // import * as EthCtrl from './eth.prod';
 
-import config from '../config';
-
 const Poll = mongoose.model('Poll');
 
 export const findAll = async (req, res, next) => {
@@ -27,7 +25,6 @@ export const create = (req, res, next) => {
   poll.id = poll._id.toString();
 
   poll.save().then((poll) => {
-    poll.eth.contractSecretKey = undefined;
     res.status(200).send(poll);
 
     EthCtrl.deployContract({
@@ -35,7 +32,7 @@ export const create = (req, res, next) => {
       startDate: new Date(poll.startDate).getTime() / 1000,
       endDate: new Date(poll.endDate).getTime() / 1000
     }).then((result) => {
-      console.log('Eth deploy conteact');
+      console.log('Contract is deployed');
       console.log(result);
     });
 

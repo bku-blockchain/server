@@ -47,8 +47,9 @@ const VoteSchema = new Schema({
       }
     }]
   }],
+  hashValue: String,
   eth: {
-    address: String
+    txHash: String
   }
 }, {
   timestamps: {
