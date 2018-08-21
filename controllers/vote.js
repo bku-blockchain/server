@@ -2,8 +2,7 @@ import mongoose from 'mongoose';
 import moment from 'moment';
 import cryptoJS from 'crypto-js';
 
-import * as EthCtrl from './eth.local';
-// import * as EthCtrl from './eth.prod';
+import * as EthCtrl from './eth';
 
 const Poll = mongoose.model('Poll');
 const Vote = mongoose.model('Vote');
@@ -43,7 +42,7 @@ export const create = async (req, res, next) => {
     // TODO
 
     /** Check questions */
-    const validQuestions = questions;
+    const validQuestions = JSON.parse(questions);
     /**
     const validQuestions = questions.map((q) => {
       const { ordinal, type, options } = q;
@@ -68,28 +67,30 @@ export const create = async (req, res, next) => {
     */
 
     /** Create new Vote instance */
-    const vote = new Vote({
-      userID, pollID, questions: validQuestions
+    const voteInstance = new Vote({
+      userID, pollID,
+      questions: validQuestions
     });
-    vote.id = vote._id.toString();
-    vote.hashValue = `0x${cryptoJS.SHA256(`${vote.userID}-${vote.pollID}`).toString(cryptoJS.enc.Hex)}`;
+    voteInstance.id = voteInstance._id.toString();
+    voteInstance.hashValue =
+      `0x${cryptoJS.SHA256(`${voteInstance.userID}-${voteInstance.pollID}`).toString(cryptoJS.enc.Hex)}`;
 
-    /** Save data */
-    return vote.save().then((vote) => {
-      res.status(200).send(vote);
+    /** Save data to mongo */
+    const vote = await voteInstance.save();
 
-      EthCtrl.createVoting({
-        voteID: vote.id,
-        contractAddress: poll.eth.contractAddress,
-        hashValue: vote.hashValue,
-        secretKey: poll.eth.contractSecretKey,
-        userID
-      }).then((result) => {
-        console.log('Voting is pushed');
-        console.log(result);
-      });
+    /** Send to client */
+    res.status(200).send(vote);
 
+    /** push to smart contract */
+    const commit = await EthCtrl.createVoting({
+      voteID: vote.id,
+      contractAddress: poll.eth.contractAddress,
+      hashValue: vote.hashValue,
+      secretKey: poll.eth.contractSecretKey,
+      userID
     });
+    console.log('Voting is pushed');
+    console.log(commit);
 
   } catch (err) {
     console.log(err);

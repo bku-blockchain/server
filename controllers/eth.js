@@ -3,19 +3,50 @@ import mongoose from 'mongoose';
 
 import PollingContractJSON from '../build/contracts/Polling.json';
 
+const config = require('../config');
+
 const Poll = mongoose.model('Poll');
 const Vote = mongoose.model('Vote');
 
-const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+const provider = config.eth.network == 'testnet' ? config.eth.provider : 'http://localhost:8545';
+console.log('Ethereum provider:', provider);
+
+const web3 = new Web3(new Web3.providers.HttpProvider(provider));
+
 const { abi, bytecode } = PollingContractJSON;
 const gasPrice = web3.utils.toHex(1e9);
 
-const configDefaultAccount = async () => {
+/** Configure Functions */
+const configDefaultAccount_TestNet = async () => {
+  /**
+   * Add to wallet, can use sendTransaction()
+   * Dont have to sign to transaction manually
+   */
+  const privateKey = config.eth.ropstenPrivateKey;
+  const account = web3.eth.accounts.privateKeyToAccount(`0x${privateKey}`);
+  web3.eth.accounts.wallet.add(account);
+
+  /** Set the default account, used to `from` */
+  web3.eth.defaultAccount = account.address;
+};
+
+const configDefaultAccount_Local = async () => {
   const accounts = await web3.eth.getAccounts();
   web3.eth.defaultAccount = accounts[0];
+};
+
+const configDefaultAccount = async () => {
+  if (config.eth.network == 'testnet') {
+    await configDefaultAccount_TestNet();
+  } else {
+    await configDefaultAccount_Local();
+  }
+
   console.log('Default account address:', web3.eth.defaultAccount);
 };
 
+
+/** Functions */
 export const deployContract = async ({ pollID, startDate, endDate }) => {
   try {
     const PollingContract = new web3.eth.Contract(abi);

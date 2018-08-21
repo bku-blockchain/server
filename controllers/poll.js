@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
+import moment from 'moment';
 
-import * as EthCtrl from './eth.local';
-// import * as EthCtrl from './eth.prod';
+import * as EthCtrl from './eth';
 
 const Poll = mongoose.model('Poll');
 
@@ -16,31 +16,43 @@ export const findAll = async (req, res, next) => {
     });
 };
 
-export const create = (req, res, next) => {
-  const data = req.body;
-  console.log(data);
-  // TODO: check ${data} for validation
+export const create = async (req, res, next) => {
+  const { eventID, ownerID, title, description, startDate, endDate, questions } = req.body;
+  try {
+    // TODO: validate event
 
-  const poll = new Poll(data);
-  poll.id = poll._id.toString();
+    // TODO: validate owner
 
-  poll.save().then((poll) => {
+    // Create new instance Poll
+    const newInstancePoll = new Poll({
+      eventID, ownerID, title, description,
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+      questions: JSON.parse(questions)
+    });
+    newInstancePoll.id = newInstancePoll._id.toString();
+
+    console.log(newInstancePoll);
+
+    // Save poll to mongo
+    const poll = await newInstancePoll.save();
+
+    // Send data to client
     res.status(200).send(poll);
 
-    EthCtrl.deployContract({
+    // Deploy new smart contract
+    const commit = EthCtrl.deployContract({
       pollID: poll.id,
       startDate: new Date(poll.startDate).getTime() / 1000,
       endDate: new Date(poll.endDate).getTime() / 1000
-    }).then((result) => {
-      console.log('Contract is deployed');
-      console.log(result);
     });
+    console.log('Contract is deployed');
+    console.log(commit);
 
-  })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({ message: err.message });
-    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: err.message });
+  }
 };
 
 export const findOne = async (req, res, next) => {
