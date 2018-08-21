@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(helmet({ frameguard: { action: 'deny' } }));
 app.use(compression());
 
-app.use(express.static(path.join(__dirname, './build')));
+app.use(express.static(path.join(__dirname, './public/')));
 
 app.use('/api/', limiter);
 
