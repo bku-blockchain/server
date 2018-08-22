@@ -27,29 +27,34 @@ export function createUser(req, res, next) {
   });
 }
 
-export function authorization(req, res, next) {
+export async function authorization(req, res, next) {
   const token = req.body.token || req.query.token || req.headers['x-access-token'];
   if (!token) {
+    console.log('User dont have token');
     return res.status(400).send({ message: 'Require authentication token for request.' });
   }
-  return AuthToken.findOne({ token }).exec().then((authToken) => {
+  try {
+    const authToken = AuthToken.findOne({ token });
     if (!authToken || authToken.expire < new Date().getTime()) {
       if (authToken) {
+        console.log('Token expired');
         AuthToken.deleteOne({ token }).exec().then(() => {});
       }
       return res.status(401).send({ message: 'Token is not valid' });
     }
     return next();
-  }).catch((err) => {
+
+  } catch (err) {
     console.log(err);
     res.status(500).send({ message: err.message });
-  });
+  }
 }
 
-export const login = (req, res, next) => {
+export const login = async (req, res, next) => {
   // TODO
   const { email, password } = req.body;
-  return User.findOne({ email }).exec().then((user) => {
+  try {
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).send({ message: 'No user exists with such email.' });
     }
@@ -58,24 +63,29 @@ export const login = (req, res, next) => {
     }
     user.password = null;
     user.salt = null;
-    return AuthToken.findOne({ userId: user.id }).exec().then((authToken) => {
-      if (authToken) {
-        return res.status(400).send({ message: 'You have logged in from other device.' });
-      }
-      const token = jwt.sign(
-        { data: user },
-        config.app.secretKey,
-        { expiresIn: config.app.tokenExpire }
-      );
-      const expire = new Date().getTime() + config.app.tokenExpire * 1000;
-      authToken = new AuthToken({ userId: user.id, token, expire });
-      return authToken.save().then(() => res.status(200).send({ user, token }));
-    });
-  })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({ message: err.message });
-    });
+
+    let authToken = await AuthToken.findOne({ userId: user.id });
+    if (authToken && authToken.expire >= new Date().getTime()) {
+      return res.status(400).send({ message: 'You have logged in from other device.' });
+    }
+    if (authToken) {
+      await AuthToken.deleteOne({ userId: user.id });
+    }
+    const token = jwt.sign(
+      { data: user },
+      config.app.secretKey,
+      { expiresIn: config.app.tokenExpire }
+    );
+    const expire = new Date().getTime() + config.app.tokenExpire * 1000;
+    authToken = new AuthToken({ userId: user.id, token, expire });
+    await authToken.save();
+
+    res.status(200).send({ user, token });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: err.message });
+  }
 };
 
 export const forgotPassword = async (req, res, next) => {
@@ -91,8 +101,9 @@ export const resetPassword = async (req, res, next) => {
 
 export function logout(req, res, next) {
   const { userId } = req.body;
+  const token = req.body.token || req.query.token || req.headers['x-access-token'];
   if (!userId) return res.status(400).send({ message: 'Require user id for the request.' });
-  return AuthToken.deleteOne({ userId }).exec()
+  return AuthToken.deleteOne({ userId, token }).exec()
     .then(() => res.status(200).send({ message: 'Logout successfully.' }))
     .catch((err) => {
       console.log(err);
