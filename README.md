@@ -1,4 +1,4 @@
-# Decentralized Voting Application - Server
+# MoST - Decentralized Voting Application - Server
 
 ## Installation
 ```
