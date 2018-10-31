@@ -5,10 +5,7 @@ const Schema = mongoose.Schema;
 const PollSchema = new Schema({
   id: {
     type: String,
-    index: {
-      unique: true,
-      sparse: true
-    }
+    unique: true
   },
   eventID: {
     type: String
@@ -31,38 +28,10 @@ const PollSchema = new Schema({
     type: Date,
     required: 'Please choose a end date'
   },
-  questions: [{
-    // Ordinal of question in a poll
-    ordinal: {
-      type: Number,
-      required: 'Please add oridinal for question'
-    },
-    title: {
-      type: String,
-      required: 'Please fill in a title for question'
-    },
-    type: {
-      type: String,
-      enum: ['Rating', 'Polling'],
-      required: 'Please choose type for question, Rating or Polling'
-    },
-    maxSelected: {
-      type: Number, // only for Polling type
-      default: 1
-    },
-    /**
-     * Use for both Rating and Polling
-     */
-    options: [{
-      ordinal: {
-        type: Number,
-        required: 'Please order your options in question'
-      },
-      name: {
-        type: String,
-        required: 'Please fill a name for option'
-      }
-    }]
+  candidates: [{
+    id: String,
+    name: String,
+    description: String
   }],
   eth: {
     contractAddress: String,

@@ -5,8 +5,7 @@ import * as EthCtrl from './eth';
 
 const Poll = mongoose.model('Poll');
 
-export const findAll = async (req, res, next) => {
-  // TODO - Make Restful API
+export const findAll = (req, res, next) => {
   Poll.find().exec().then((polls) => {
     res.status(203).send(polls);
   })
@@ -17,38 +16,26 @@ export const findAll = async (req, res, next) => {
 };
 
 export const create = async (req, res, next) => {
-  const { eventID, ownerID, title, description, startDate, endDate, questions } = req.body;
+  const { eventID, ownerID, title, description, startDate, endDate, candidates } = req.body;
   try {
-    // TODO: validate event
-
-    // TODO: validate owner
-
-    // Create new instance Poll
-    const newInstancePoll = new Poll({
+    let poll = new Poll({
       eventID, ownerID, title, description,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
-      questions: JSON.parse(questions)
+      candidates: JSON.parse(candidates)
     });
-    newInstancePoll.id = newInstancePoll._id.toString();
-
-    console.log(newInstancePoll);
-
-    // Save poll to mongo
-    const poll = await newInstancePoll.save();
-
-    // Send data to client
-    res.status(200).send(poll);
-
+    poll.id = poll._id.toString();
+    console.log(poll);
 
     // Deploy new smart contract
-    const commit = EthCtrl.deployContract({
-      pollID: poll.id,
-      startDate: new Date(poll.startDate).getTime() / 1000,
-      endDate: new Date(poll.endDate).getTime() / 1000
-    });
+    poll = EthCtrl.deployPollContract({ poll });
     console.log('Contract is deployed');
-    console.log(commit);
+    console.log(poll);
+
+    // Save poll to mongo
+    poll = await poll.save();
+
+    return res.status(200).send(poll);
 
   } catch (err) {
     console.log(err);

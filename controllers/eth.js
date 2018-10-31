@@ -8,6 +8,12 @@ const config = require('../config');
 const Poll = mongoose.model('Poll');
 const Vote = mongoose.model('Vote');
 
+
+/**
+ * ==========================================================================
+ * Configure Ethereum
+ * ==========================================================================
+ * */
 const provider = config.eth.network == 'testnet' ? config.eth.provider : 'http://localhost:8545';
 console.log('Ethereum provider:', provider);
 
@@ -49,8 +55,15 @@ const configDefaultAccount = async () => {
 };
 
 
-/** Functions */
-export const deployContract = async ({ pollID, startDate, endDate }) => {
+/**
+ * ==========================================================================
+ * Functions
+ * ==========================================================================
+ * */
+export const deployPollContract = async ({ poll }) => {
+  const startDate = new Date(poll.startDate).getTime() / 1000;
+  const endDate = new Date(poll.endDate).getTime() / 1000;
+
   try {
     const PollingContract = new web3.eth.Contract(abi);
 
@@ -71,37 +84,33 @@ export const deployContract = async ({ pollID, startDate, endDate }) => {
     })
       .on('transactionHash', (txHash) => {
         console.log('Transaction Hash:', txHash);
+        poll.eth = {
+          ownerAddress: web3.eth.defaultAccount,
+          contractSecretKey: secretKey,
+          txHash
+        };
+        return poll;
+      });
+    // .on('receipt', (receipt) => {
+    //   console.log(receipt.transactionHash);
+    //   console.log(receipt.contractAddress);
 
-        Poll.findOneAndUpdate({ id: pollID }, {
-          eth: {
-            ownerAddress: web3.eth.defaultAccount,
-            txHash,
-            contractSecretKey: secretKey
-          }
-        }).exec().then((poll) => {
-          console.log('Poll is updated');
-          console.log(poll);
-        });
-      })
-      .on('receipt', (receipt) => {
-        console.log(receipt.transactionHash);
-        console.log(receipt.contractAddress);
+    //   // Update Poll
+    //   Poll.findOneAndUpdate({ id: pollID }, {
+    //     eth: {
+    //       // txHash: receipt.transactionHash,
+    //       contractAddress: receipt.contractAddress
+    //     }
+    //   }).exec().then((poll) => {
+    //     console.log('Poll is updated');
+    //     console.log(poll);
+    //   });
 
-        // Update Poll
-        Poll.findOneAndUpdate({ id: pollID }, {
-          eth: {
-            // txHash: receipt.transactionHash,
-            contractAddress: receipt.contractAddress
-          }
-        }).exec().then((poll) => {
-          console.log('Poll is updated');
-          console.log(poll);
-        });
-
-      }); // end on('receipt')
+    // }); // end on('receipt')
 
   } catch (err) {
     console.log(err);
+    return err;
   }
 };
 

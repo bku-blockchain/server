@@ -7,19 +7,41 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
   id: {
     type: String,
-    index: {
-      unique: true,
-      sparse: true
-    }
+    unique: true
+  },
+  username: {
+    type: String,
+    unique: true,
+    trim: true,
+    required: 'Username is required'
   },
   email: {
     type: String,
-    index: {
-      unique: true,
-      sparse: true
-    },
+    unique: true,
     lowercase: true,
     trim: true,
+    required: 'Email is required'
+  },
+  tel: {
+    type: String,
+    unique: true,
+    trim: true,
+    required: 'Tel is required'
+  },
+  displayName: {
+    firstName: {
+      type: String,
+      trim: true,
+      default: ''
+    },
+    lastName: {
+      type: String,
+      trim: true,
+      default: ''
+    }
+  },
+  photoUrl: {
+    type: String,
     default: ''
   },
   password: {
@@ -27,16 +49,7 @@ const UserSchema = new Schema({
     default: ''
   },
   salt: String,
-  role: {
-    type: String,
-    enum: ['Attender', 'Organizer', 'Admin'],
-    default: 'Attender'
-  },
-  eth: {
-    address: {
-      type: String
-    }
-  }
+  tokenExpire: Number
 }, {
   timestamps: {
     createdAt: 'createdAt',

@@ -8,6 +8,7 @@ mongoose.connect(db.uriMongo, (err) => {
     return process.exit(0);
   }
   console.log('MongoDB is connected');
+  console.log('Mongo URI is ', db.uriMongo);
 
   // Define models Mongoose
   require('./models');
