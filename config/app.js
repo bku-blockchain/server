@@ -6,8 +6,7 @@ const ONE_HOUR = 60 * 60; // in seconds
 
 module.exports = {
   secretKey: process.env.SECRET_KEY || 'server secret key',
-  // tokenExpire: 5 * ONE_HOUR,
-  tokenExpire: 60,
+  tokenExpire: 2 * ONE_HOUR,
 
   email: {
     address: process.env.EMAIL_ADDRESS || 'server email address',
