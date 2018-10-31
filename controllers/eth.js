@@ -60,7 +60,7 @@ const configDefaultAccount = async () => {
  * Functions
  * ==========================================================================
  * */
-export const deployPollContract = async ({ poll }) => {
+export const deployPollContract = async ({ poll }, cb) => {
   const startDate = new Date(poll.startDate).getTime() / 1000;
   const endDate = new Date(poll.endDate).getTime() / 1000;
 
@@ -89,7 +89,7 @@ export const deployPollContract = async ({ poll }) => {
           contractSecretKey: secretKey,
           txHash
         };
-        return poll;
+        cb(null, poll);
       });
     // .on('receipt', (receipt) => {
     //   console.log(receipt.transactionHash);
@@ -109,8 +109,7 @@ export const deployPollContract = async ({ poll }) => {
     // }); // end on('receipt')
 
   } catch (err) {
-    console.log(err);
-    return err;
+    cb(err);
   }
 };
 

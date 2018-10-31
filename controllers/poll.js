@@ -18,24 +18,26 @@ export const findAll = (req, res, next) => {
 export const create = async (req, res, next) => {
   const { eventID, ownerID, title, description, startDate, endDate, candidates } = req.body;
   try {
-    let poll = new Poll({
+    const poll = new Poll({
       eventID, ownerID, title, description,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
-      candidates: JSON.parse(candidates)
+      candidates
     });
     poll.id = poll._id.toString();
+    poll.candidates.forEach((x) => { x.id = x._id.toString(); });
     console.log(poll);
 
     // Deploy new smart contract
-    poll = EthCtrl.deployPollContract({ poll });
-    console.log('Contract is deployed');
-    console.log(poll);
+    EthCtrl.deployPollContract({ poll }, async (err, poll) => {
+      console.log('Contract is deployed');
+      console.log(poll);
 
-    // Save poll to mongo
-    poll = await poll.save();
+      // Save poll to mongo
+      poll = await poll.save();
 
-    return res.status(200).send(poll);
+      return res.status(200).send(poll);
+    });
 
   } catch (err) {
     console.log(err);
