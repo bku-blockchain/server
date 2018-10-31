@@ -30,6 +30,8 @@ export const create = async (req, res, next) => {
 
     // Deploy new smart contract
     EthCtrl.deployPollContract({ poll }, async (err, poll) => {
+      if (err) throw err;
+
       console.log('Contract is deployed');
       console.log(poll);
 

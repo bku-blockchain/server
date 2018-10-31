@@ -20,12 +20,11 @@ export const findAll = async (req, res, next) => {
 
 export const create = async (req, res, next) => {
 
-  const { pollID, userID, questions } = req.body;
-
+  const { userID } = req;
+  const { pollID, ballots } = req.body;
   try {
     /** Check pollID existen */
     const poll = await Poll.findOne({ id: pollID });
-    console.log(poll);
 
     if (!poll) {
       return res.status(404).send({ message: 'No poll existen with the poll ID' });
@@ -39,60 +38,43 @@ export const create = async (req, res, next) => {
       return res.status(400).send({ message: 'It\'s too late to vote' });
     }
 
-    /** Check user permission */
-    // TODO
-
-    /** Check questions */
-    const validQuestions = JSON.parse(questions);
-    /**
-    const validQuestions = questions.map((q) => {
-      const { ordinal, type, options } = q;
-      if (!ordinal || !type || !options) return null;
-      if (type !== 'Rating' && type !== 'Polling') return null;
-      if (!options.length) return null;
-      const pollQuestion = (poll.questions.filter(o => o.ordinal === ordinal) || [])[0];
-      if (!pollQuestion) return null;
-      if (type !== pollQuestion.type) return null;
-      if (type === 'Polling') {
-        if (options.length > pollQuestion.maxSelected) return null;
-      }
-      q.options = [...options].filter(o => (
-        pollQuestion.options.filter(p => p.ordinal === o.ordinal) || [])[0] !== null);
-
-      return q;
-    }).filter(o => o !== null);
-
-    if (validQuestions.length === 0) {
-      return res.status(400).send({ message: 'No valid questions' });
+    /** Check Contract is Created */
+    if (!poll.eth.contractAddress) {
+      return res.status(400).send({ message: 'Smart Contract is not created' });
     }
-    */
+
+    /** Check valid ballots */
+    const minBallots = [...ballots].filter(x => poll.candidates.filter(i => i.id == x.id).length > 0);
+    if (minBallots.length == 0) {
+      return res.status(400).send({ message: 'Ballots not contains any valid candidates' });
+    }
 
     /** Create new Vote instance */
-    const voteInstance = new Vote({
-      userID, pollID,
-      questions: validQuestions
-    });
-    voteInstance.id = voteInstance._id.toString();
-    voteInstance.hashValue =
-      `0x${cryptoJS.SHA256(`${voteInstance.userID}-${voteInstance.pollID}`).toString(cryptoJS.enc.Hex)}`;
+    const vote = new Vote({ userID, pollID, ballots: minBallots });
 
-    /** Save data to mongo */
-    const vote = await voteInstance.save();
+    vote.id = vote._id.toString();
 
-    /** Send to client */
-    res.status(200).send(vote);
+    vote.hashValue =
+      `0x${cryptoJS.SHA256(`${vote.userID}-${vote.pollID}`).toString(cryptoJS.enc.Hex)}`;
 
+    console.log(vote);
 
-    /** push to smart contract */
-    const commit = await EthCtrl.createVoting({
-      voteID: vote.id,
+    EthCtrl.createVoting({
+      vote, userID,
       contractAddress: poll.eth.contractAddress,
       hashValue: vote.hashValue,
-      secretKey: poll.eth.contractSecretKey,
-      userID
+      secretKey: poll.eth.contractSecretKey
+    }, async (err, vote) => {
+      if (err) throw err;
+
+      console.log('Voting is pushed');
+      console.log(vote);
+
+      /** Save data to mongo */
+      vote = await vote.save();
+
+      return res.status(200).send(vote);
     });
-    console.log('Voting is pushed');
-    console.log(commit);
 
   } catch (err) {
     console.log(err);

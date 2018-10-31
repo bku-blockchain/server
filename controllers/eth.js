@@ -90,37 +90,30 @@ export const deployPollContract = async ({ poll }, cb) => {
           txHash
         };
         cb(null, poll);
-      });
-    // .on('receipt', (receipt) => {
-    //   console.log(receipt.transactionHash);
-    //   console.log(receipt.contractAddress);
-
-    //   // Update Poll
-    //   Poll.findOneAndUpdate({ id: pollID }, {
-    //     eth: {
-    //       // txHash: receipt.transactionHash,
-    //       contractAddress: receipt.contractAddress
-    //     }
-    //   }).exec().then((poll) => {
-    //     console.log('Poll is updated');
-    //     console.log(poll);
-    //   });
-
-    // }); // end on('receipt')
+      })
+      .on('receipt', (receipt) => {
+        Poll.findOneAndUpdate({ id: poll.id }, { 'eth.contractAddress': receipt.contractAddress })
+          .then(() => {
+            console.log('Update Poll ID: ', poll.id);
+          });
+      })
+      .on('error', (err) => { console.log(err); });
 
   } catch (err) {
     cb(err);
   }
 };
 
-export const createVoting = async ({ voteID, contractAddress, secretKey, userID, hashValue }) => {
+export const createVoting = async ({ vote, contractAddress, secretKey, userID, hashValue }, cb) => {
   try {
     const PollingContract = new web3.eth.Contract(abi, contractAddress);
 
     const txInstance = PollingContract.methods
       .createVoting(secretKey, web3.utils.toHex(userID), hashValue);
 
-    const gasLimit = await txInstance.estimateGas();
+    // TODO: estimate gas is not working here
+    // const gasLimit = await txInstance.estimateGas();
+    const gasLimit = web3.utils.toHex(1e5);
     console.log('Gas limit:', gasLimit);
 
     txInstance.send({
@@ -130,34 +123,13 @@ export const createVoting = async ({ voteID, contractAddress, secretKey, userID,
     })
       .on('transactionHash', (txHash) => {
         console.log('Transaction Hash:', txHash);
-
-        // Update Vote
-        Vote.findOneAndUpdate({ id: voteID }, {
-          eth: {
-            txHash
-          }
-        }).exec().then((vote) => {
-          console.log('Vote is updated');
-          console.log(vote);
-        });
+        vote.eth = { txHash };
+        cb(null, vote);
       })
-      .on('receipt', (receipt) => {
-        console.log(receipt.transactionHash);
-
-        // // Update Vote
-        // Vote.findOneAndUpdate({ id: voteID }, {
-        //   eth: {
-        //     txHash: receipt.transactionHash
-        //   }
-        // }).exec().then((vote) => {
-        //   console.log('Vote is updated');
-        //   console.log(vote);
-        // });
-
-      }); // end on('receipt')
+      .on('error', (err) => { console.log(err); });
 
   } catch (err) {
-    console.log(err);
+    cb(err);
   }
 };
 
