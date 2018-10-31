@@ -1,3 +1,7 @@
+/**
+ * Environemt Variables is defined in file `.env` at the top of project
+ */
+
 const ONE_HOUR = 60 * 60; // in seconds
 
 module.exports = {

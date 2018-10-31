@@ -16,7 +16,10 @@ const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 const { abi, bytecode } = PollingContractJSON;
 const gasPrice = web3.utils.toHex(1e9);
 
-/** Configure Functions */
+/**
+ * Configure Functions
+ * use async for similar with configDefaultAccount_Local
+ */
 const configDefaultAccount_TestNet = async () => {
   /**
    * Add to wallet, can use sendTransaction()
@@ -68,20 +71,27 @@ export const deployContract = async ({ pollID, startDate, endDate }) => {
     })
       .on('transactionHash', (txHash) => {
         console.log('Transaction Hash:', txHash);
+
+        Poll.findOneAndUpdate({ id: pollID }, {
+          eth: {
+            ownerAddress: web3.eth.defaultAccount,
+            txHash,
+            contractSecretKey: secretKey
+          }
+        }).exec().then((poll) => {
+          console.log('Poll is updated');
+          console.log(poll);
+        });
       })
       .on('receipt', (receipt) => {
         console.log(receipt.transactionHash);
         console.log(receipt.contractAddress);
 
         // Update Poll
-        Poll.findOneAndUpdate({
-          id: pollID
-        }, {
+        Poll.findOneAndUpdate({ id: pollID }, {
           eth: {
-            ownerAddress: web3.eth.defaultAccount,
-            txHash: receipt.transactionHash,
-            contractAddress: receipt.contractAddress,
-            contractSecretKey: secretKey
+            // txHash: receipt.transactionHash,
+            contractAddress: receipt.contractAddress
           }
         }).exec().then((poll) => {
           console.log('Poll is updated');
@@ -112,21 +122,29 @@ export const createVoting = async ({ voteID, contractAddress, secretKey, userID,
     })
       .on('transactionHash', (txHash) => {
         console.log('Transaction Hash:', txHash);
-      })
-      .on('receipt', (receipt) => {
-        console.log(receipt.transactionHash);
 
         // Update Vote
-        Vote.findOneAndUpdate({
-          id: voteID
-        }, {
+        Vote.findOneAndUpdate({ id: voteID }, {
           eth: {
-            txHash: receipt.transactionHash
+            txHash
           }
         }).exec().then((vote) => {
           console.log('Vote is updated');
           console.log(vote);
         });
+      })
+      .on('receipt', (receipt) => {
+        console.log(receipt.transactionHash);
+
+        // // Update Vote
+        // Vote.findOneAndUpdate({ id: voteID }, {
+        //   eth: {
+        //     txHash: receipt.transactionHash
+        //   }
+        // }).exec().then((vote) => {
+        //   console.log('Vote is updated');
+        //   console.log(vote);
+        // });
 
       }); // end on('receipt')
 

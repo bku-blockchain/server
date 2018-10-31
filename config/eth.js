@@ -1,3 +1,7 @@
+/**
+ * Environemt Variables is defined in file `.env` at the top of project
+ */
+
 module.exports = {
   apiKey: process.env.INFURA_API_KEY || 'your infura api key',
   apiSecret: process.env.INFURA_API_SECRET || 'your infura api secret',

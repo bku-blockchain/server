@@ -26,6 +26,7 @@ export const create = async (req, res, next) => {
     /** Check pollID existen */
     const poll = await Poll.findOne({ id: pollID });
     console.log(poll);
+
     if (!poll) {
       return res.status(404).send({ message: 'No poll existen with the poll ID' });
     }
@@ -80,6 +81,7 @@ export const create = async (req, res, next) => {
 
     /** Send to client */
     res.status(200).send(vote);
+
 
     /** push to smart contract */
     const commit = await EthCtrl.createVoting({

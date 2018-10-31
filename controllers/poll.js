@@ -40,6 +40,7 @@ export const create = async (req, res, next) => {
     // Send data to client
     res.status(200).send(poll);
 
+
     // Deploy new smart contract
     const commit = EthCtrl.deployContract({
       pollID: poll.id,

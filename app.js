@@ -7,19 +7,19 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
-import RateLimit from 'express-rate-limit';
+// import RateLimit from 'express-rate-limit';
 
 import routes from './routes';
 
 /** Configure App Express */
 const app = express();
 
-const ONE_MINUTE = 60 * 1000;
-const limiter = new RateLimit({
-  windowMs: 5 * ONE_MINUTE, // milliseconds, how long to keep records
-  max: 100, // limit each IP to 100 requests per windowMs
-  delayMs: 0 // disable delaying - full speed until the max limit is reached
-});
+// const ONE_MINUTE = 60 * 1000;
+// const limiter = new RateLimit({
+//   windowMs: 5 * ONE_MINUTE, // milliseconds, how long to keep records
+//   max: 100, // limit each IP to 100 requests per windowMs
+//   delayMs: 0 // disable delaying - full speed until the max limit is reached
+// });
 
 // usage for middlewares
 app.use(cors());
@@ -32,9 +32,10 @@ app.use(compression());
 
 app.use(express.static(path.join(__dirname, './public/')));
 
-app.use('/api/', limiter);
+// app.use('/api/', limiter);
 
 app.use('/', routes);
+
 
 // redirect other path to ./build
 app.get('*', (req, res, next) => {

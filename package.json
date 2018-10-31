@@ -1,13 +1,7 @@
 {
-  "name": "dvapp-server",
-  "version": "0.0.0",
+  "name": "most",
+  "version": "1.0.0",
   "private": true,
-  "homepage": "https://github.com/decentralized-voting/server",
-  "description": "Demo application for a module in project at BKU Blockchain Lab",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/decentralized-voting/server.git"
-  },
   "scripts": {
     "start": "node index",
     "lint": "eslint ./",
@@ -61,18 +55,7 @@
     "solium-plugin-security": "^0.1.1",
     "truffle": "^4.1.13"
   },
-  "author": {
-    "name": "huynhsamha",
-    "email": "huynhsamha@gmail.com",
-    "url": "https://github.com/huynhsamha"
-  },
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/decentralized-voting/server/issues"
-  },
-  "contributors": [
-    "huynhsamha"
-  ],
   "engines": {
     "node": ">=6.10.0",
     "npm": ">=3.10.8"
