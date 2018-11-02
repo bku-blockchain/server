@@ -61,7 +61,21 @@ const UserSchema = new Schema({
   active: {
     type: Boolean,
     default: false
-  }
+  },
+  contacts: [{
+    uid: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    time: {
+      type: Date,
+      default: new Date()
+    },
+    note: {
+      type: String,
+      default: ''
+    }
+  }]
 }, {
   timestamps: {
     createdAt: 'createdAt',
