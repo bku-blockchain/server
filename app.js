@@ -35,11 +35,10 @@ app.use(express.static(path.join(__dirname, './public/')));
 // app.use('/api/', limiter);
 
 app.get('/', (req, res, next) => {
-  res.send('Hello to BKU Most');
+  res.sendFile(path.join(__dirname, './views/index.html'));
 });
 
 app.use('/', routes);
-
 
 // redirect other path to ./build
 app.get('*', (req, res, next) => {
