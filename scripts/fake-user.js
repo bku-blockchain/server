@@ -1,28 +1,41 @@
-import mongoose from 'mongoose';
+const fake = require('fakerator')();
+const fs = require('fs');
+const path = require('path');
 
-const User = mongoose.model('User');
+const positions = [
+  'Operations manager',
+  'Quality control, safety, environmental manager.',
+  'Accountant, bookkeeper, controller',
+  'Office manager.',
+  'Receptionist',
+  'Foreperson, supervisor, lead person',
+  'Marketing manager',
+  'Purchasing manager',
+  'Shipping and receiving person or manager',
+  'Professional staff'
+];
 
-const rand = () => Math.floor(Math.random() * 9999999);
-const randDate = () => new Date(Date.now() + rand() * (Math.random() > 0.5 ? 1 : -1));
+const fakeUser = () => {
+  const firstName = fake.names.firstName();
+  const lastName = fake.names.lastName();
+  const username = fake.internet.userName(firstName, lastName);
+  const email = fake.internet.email(firstName, lastName);
+  const tel = fake.phone.number();
+  const photoUrl = fake.internet.avatar();
+  const company = fake.company.name();
+  const position = positions[Math.floor(Math.random() * positions.length)];
+  const password = 1;
 
-const fake = (data) => {
-  const user = new User(data);
-  user.id = user._id.toString();
-  user.save().then(user => console.log(user.id))
-    .catch((err) => {
-      console.log(err);
-    });
+  return {
+    username, email, password, tel, photoUrl, position, company,
+    displayName: { firstName, lastName }
+  };
 };
 
-for (let i = 0; i < 10; i++) {
-  const data = {
-    email: `example_${i}@gmail.com`,
-    password: `usr${i}`,
-    eth: {
-      address: rand()
-    }
-  };
-  if (i % 3 == 0) data.role == 'Organizer';
-
-  fake(data);
+const users = [];
+for (let i = 0; i < 50; i++) {
+  users.push(fakeUser());
 }
+
+
+fs.writeFileSync(path.join(__dirname, './db.json'), JSON.stringify(users, null, 4));
