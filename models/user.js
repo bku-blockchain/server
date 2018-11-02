@@ -44,6 +44,14 @@ const UserSchema = new Schema({
     type: String,
     default: ''
   },
+  company: {
+    type: String,
+    default: ''
+  },
+  position: {
+    type: String,
+    default: ''
+  },
   password: {
     type: String,
     default: ''
