@@ -20,7 +20,29 @@ export async function createUser(req, res, next) {
 
   } catch (err) {
     console.log(err);
-    res.send(err);
+    res.status(500).send(err);
+  }
+}
+
+export async function fakeUser(req, res, next) {
+  const secretKey = req.headers['secret-key'];
+  const serverKey = process.env.SECRET_KEY_FAKE_DB;
+  if (secretKey != serverKey || !serverKey)
+    return res.status(400).send('Định hack tao à. Không dễ đâu cưng :)');
+
+  let user = new User(req.body);
+  user.id = user._id.toString();
+  user.active = true;
+
+  try {
+    user = await user.save();
+    user.password = null;
+    user.salt = null;
+    res.status(201).send(user);
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
   }
 }
 
@@ -37,7 +59,7 @@ export async function authorization(req, res, next) {
       }
       const { id } = decoded;
       const user = await User.findOne({ id }, 'tokenExpire');
-      if (!user.tokenExpire) {
+      if (!user || !user.tokenExpire) {
         return res.send({ message: 'Invalid Token' });
       }
 

@@ -57,7 +57,11 @@ const UserSchema = new Schema({
     default: ''
   },
   salt: String,
-  tokenExpire: Number
+  tokenExpire: Number,
+  active: {
+    type: Boolean,
+    default: false
+  }
 }, {
   timestamps: {
     createdAt: 'createdAt',
