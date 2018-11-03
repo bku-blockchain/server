@@ -9,14 +9,12 @@ const User = mongoose.model('User');
 
 export async function createUser(req, res, next) {
   const { username, email, password, tel } = req.body;
-  let user = new User({ username, email, password, tel });
+  const user = new User({ username, email, password, tel });
   user.id = user._id.toString();
 
   try {
-    user = await user.save();
-    user.password = null;
-    user.salt = null;
-    res.status(201).send(user);
+    await user.save();
+    res.status(201).send({ message: 'Create Successfully' });
 
   } catch (err) {
     console.log(err);
@@ -53,7 +51,9 @@ export async function authorization(req, res, next) {
   }
   try {
     jwt.verify(token, config.app.secretKey, async (err, decoded) => {
-      console.log(decoded);
+      /**
+       * decoded: { id, username, iat: issueAt, exp: expire }
+       */
       if (err) {
         return res.send({ message: 'Invalid Token' });
       }
@@ -76,7 +76,7 @@ export async function authorization(req, res, next) {
 export const login = async (req, res, next) => {
   const { username, password } = req.body;
   try {
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }, '-contacts');
     if (!user) {
       return res.status(404).send({ message: 'No user exists with such email' });
     }
