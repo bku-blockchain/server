@@ -66,9 +66,33 @@ export const addContacts = async (req, res, next) => {
   }
 };
 
+export const fakeContacts = async (req, res, next) => {
+  const secretKey = req.headers['secret-key'];
+  const serverKey = process.env.SECRET_KEY_FAKE_DB;
+  if (secretKey != serverKey || !serverKey)
+    return res.status(400).send('Định hack tao à. Không dễ đâu cưng :)');
+
+  const { userID, contacts } = req.body; // [ { uid: '', note: '' } ]
+  try {
+    const user = await User.findOne({ id: userID });
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+    const _contacts = contacts.map(o => ({
+      uid: new mongoose.Types.ObjectId(o.uid),
+      note: o.note
+    }));
+    user.contacts = [...user.contacts, ..._contacts];
+    await user.save();
+    return res.status(200).send({ message: 'Update successfully' });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+};
+
 export const getContacts = async (req, res, next) => {
   const { userID } = req;
-  console.log(userID);
   try {
     const user = await User.findOne({ id: userID }).populate('contacts.uid', '-password -salt -tokenExpire -contacts');
     if (!user) {

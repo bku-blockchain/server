@@ -38,4 +38,4 @@ for (let i = 0; i < 50; i++) {
 }
 
 
-fs.writeFileSync(path.join(__dirname, './db.json'), JSON.stringify(users, null, 4));
+fs.writeFileSync(path.join(__dirname, './db_user.json'), JSON.stringify(users, null, 4));
