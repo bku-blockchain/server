@@ -173,6 +173,58 @@
 ```
 
 
+### Add records
+#### Request
++ POST /api/user/record
++ Headers: Authorization: contains token -> userID
++ Body: { partner, note } -> partner: String - ID of user
+#### Response
++ Body:
+```json
+{ "message": "Create successfully" }
+```
+
+### Get records
+#### Request
++ GET /api/user/records
++ Headers: Authorization: contains token
+#### Response
++ Body:
+
+```json
+{
+    "records": [
+        {
+            "time": "2018-11-06T12:27:33.328Z",
+            "note": "meet at bach khoa uni",
+            "_id": "5be1897aba650d05cd8098c6",
+            "userID": "5bdd00cb0f6a9b10bc8ccded",
+            "partner": {
+                "displayName": {
+                    "firstName": "Lindsey",
+                    "lastName": "Jakubowski"
+                },
+                "photoUrl": "https://s3.amazonaws.com/uifaces/faces/twitter/eyronn/128.jpg",
+                "company": "Kautzer, Ward and Dooley Corp.",
+                "position": "Receptionist",
+                "active": true,
+                "_id": "5bdd00cb0f6a9b10bc8ccdd4",
+                "username": "lindsey.jakubowski1624",
+                "email": "lindsey.jakubowski@gmail.com",
+                "tel": "1-456-279-0404 x16980",
+                "id": "5bdd00cb0f6a9b10bc8ccdd4",
+                "createdAt": "2018-11-03T01:58:35.616Z",
+                "updatedAt": "2018-11-03T02:01:40.487Z",
+                "__v": 1
+            },
+            "id": "5be1897aba650d05cd8098c6",
+            "createdAt": "2018-11-06T12:30:50.569Z",
+            "updatedAt": "2018-11-06T12:30:50.569Z",
+            "__v": 0
+        }
+    ]
+}
+```
 
 ## My Notes (Don't care)
 
