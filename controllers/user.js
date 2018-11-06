@@ -2,7 +2,7 @@ import mongoose, { SchemaType, SchemaTypes } from 'mongoose';
 import async from 'async';
 
 const User = mongoose.model('User');
-
+const Record = mongoose.model('Record');
 
 export const findAll = async (req, res, next) => {
   try {
@@ -99,6 +99,32 @@ export const getContacts = async (req, res, next) => {
       return res.status(404).send({ message: 'User not found' });
     }
     return res.status(200).send({ contacts: user.contacts });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+};
+
+export const getRecords = async (req, res, next) => {
+  const { userID } = req;
+  try {
+    const records = await Record.find({ userID }).populate('partner', '-password -salt -tokenExpire -contacts');
+    return res.status(200).send({ records });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+};
+
+export const addRecord = async (req, res, next) => {
+  const { userID } = req;
+  const { partner, note } = req.body;
+  const record = new Record({ userID, partner: new mongoose.Types.ObjectId(partner), note });
+  record.id = record._id.toString();
+  try {
+    await record.save();
+    return res.status(201).send({ message: 'Create successfully' });
   } catch (err) {
     console.log(err);
     res.status(500).send(err);
