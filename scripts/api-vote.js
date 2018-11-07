@@ -1,11 +1,11 @@
 const axios = require('axios').default;
 
 const data = {
-  pollID: '5bd9c575eea19b20c721b540',
+  pollID: '5be28ef687ead6564b3af204',
   ballots: [
-    { id: '5bd9c575eea19b20c721b543' },
-    { id: '5bd9c575eea19b20c721b543' },
-    { id: '5bd9c575eea19b20c721b542' }
+    { id: '5be28ef687ead6564b3af205' },
+    { id: '5be28ef687ead6564b3af208' },
+    { id: '5be28ef687ead6564b3af208' }
   ]
 };
 
@@ -13,7 +13,7 @@ console.log(data);
 
 axios.post('http://localhost:4200/api/vote', data, {
   headers: {
-    authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZDlhYTMxZjdmNTI4MTFmYzJhYTYwNSIsInVzZXJuYW1lIjoibW9zdGMiLCJpYXQiOjE1NDA5OTQ2NzMsImV4cCI6MTU0MTAwMTg3M30.NQtRJkqEpMg5ZWJzR9VzB3HfZwN1vFw5-dMnuJ-GdRQ'
+    authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZTI3YzhmYmE3MzQ2MjMwYTJhMGRjZiIsInVzZXJuYW1lIjoiZHVhbmUxNSIsImlhdCI6MTU0MTU2OTcyMywiZXhwIjoxNTQxOTU4NTIzfQ.znwRF3F1LA8Gu9H3rHZd6CvOvU1OrZV_XiRYWPqbDNo'
   }
 }).then((res) => {
   console.log(res);

@@ -18,6 +18,21 @@ export const findAll = async (req, res, next) => {
     });
 };
 
+export const findOneByUser = async (req, res, next) => {
+  const { userID, pollID } = req.params;
+  console.log(userID, pollID);
+  Vote.findOne({ userID, pollID }).exec().then((vote) => {
+    if (!vote) {
+      return res.status(404).send({ message: 'User not vote' });
+    }
+    res.status(203).send(vote);
+  })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({ message: err.message });
+    });
+};
+
 export const create = async (req, res, next) => {
 
   const { userID } = req;

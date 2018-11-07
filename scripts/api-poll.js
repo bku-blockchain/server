@@ -17,11 +17,11 @@ const data = {
 
 console.log(data);
 
-// axios.post('http://localhost:4200/api/poll', data, {
-axios.post('http://bku-blockchain-most.tk/api/poll', data, {
+axios.post('http://localhost:4200/api/poll', data, {
+// axios.post('http://bku-blockchain-most.tk/api/poll', data, {
   headers: {
-    authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZGQwNWNjMmU5ZWE2MjJiNzZlNDc1ZSIsInVzZXJuYW1lIjoiZHVhbmUxNSIsImlhdCI6MTU0MTU3MDc2OCwiZXhwIjoxNTQxOTU5NTY4fQ.dg4UnRuVu1R2L27wYsdm5g_0bQkoilJ4sngblJtFYM8'
-    // authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZTI3YzhmYmE3MzQ2MjMwYTJhMGRjZiIsInVzZXJuYW1lIjoiZHVhbmUxNSIsImlhdCI6MTU0MTU2OTcyMywiZXhwIjoxNTQxOTU4NTIzfQ.znwRF3F1LA8Gu9H3rHZd6CvOvU1OrZV_XiRYWPqbDNo'
+    // authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZGQwNWNjMmU5ZWE2MjJiNzZlNDc1ZSIsInVzZXJuYW1lIjoiZHVhbmUxNSIsImlhdCI6MTU0MTU3MDc2OCwiZXhwIjoxNTQxOTU5NTY4fQ.dg4UnRuVu1R2L27wYsdm5g_0bQkoilJ4sngblJtFYM8'
+    authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZTI3YzhmYmE3MzQ2MjMwYTJhMGRjZiIsInVzZXJuYW1lIjoiZHVhbmUxNSIsImlhdCI6MTU0MTU2OTcyMywiZXhwIjoxNTQxOTU4NTIzfQ.znwRF3F1LA8Gu9H3rHZd6CvOvU1OrZV_XiRYWPqbDNo'
   }
 }).then(res => res.data)
   .then((res) => {
