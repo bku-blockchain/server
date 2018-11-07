@@ -61,8 +61,8 @@ const configDefaultAccount = async () => {
  * ==========================================================================
  * */
 export const deployPollContract = async ({ poll }, cb) => {
-  const startDate = new Date(poll.startDate).getTime() / 1000;
-  const endDate = new Date(poll.endDate).getTime() / 1000;
+  const startDate = Math.floor(new Date(poll.startDate).getTime() / 1000);
+  const endDate = Math.floor(new Date(poll.endDate).getTime() / 1000);
 
   try {
     const PollingContract = new web3.eth.Contract(abi);
