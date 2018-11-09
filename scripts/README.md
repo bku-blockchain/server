@@ -10,10 +10,18 @@ Run following scripts waterfall
 
 Database generated at `db/*.json`
 
-## Export database Mongo
+
+## Export database from Mongo to JSON
+At root of project, run
 ```bash
-./export.sh
+./scripts/export.sh
 ```
 Database exported at `db/export/*.json`
 
-## Import database Mongo
+
+## Import database from JSON to Mongo
+At root of project, run
+```bash
+./scripts/import.sh
+```
+Database imported at `db/export/*.json`
