@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { db } from './config';
 
 /** Connect database mongodb  */
-mongoose.connect(db.uriMongo, { useNewUrlParser: true }, (err) => {
+mongoose.connect(db.uriMongo, { useNewUrlParser: true, useCreateIndex: true }, (err) => {
   if (err) {
     console.error(err);
     return process.exit(0);
