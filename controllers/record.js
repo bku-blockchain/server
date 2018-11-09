@@ -7,7 +7,9 @@ const Record = mongoose.model('Record');
 export const getRecords = async (req, res, next) => {
   const { userID } = req;
   try {
-    const records = await Record.find({ userID }).populate('partner', '-password -salt -tokenExpire -contacts');
+    const records = await Record.find({ userID })
+      .populate('partner', '-password -salt -tokenExpire -contacts')
+      .sort({ time: -1 }).limit(20);
     return res.status(200).send(records);
 
   } catch (err) {
