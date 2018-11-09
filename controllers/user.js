@@ -2,15 +2,28 @@ import mongoose, { SchemaType, SchemaTypes } from 'mongoose';
 import async from 'async';
 
 const User = mongoose.model('User');
-const Record = mongoose.model('Record');
 
 export const findAll = async (req, res, next) => {
   try {
     const users = await User.find({}, '-password -salt -tokenExpire -contacts').limit(20);
-    res.status(203).send(users);
+    return res.status(200).send(users);
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
+    res.status(400).send({ message: err.message });
+  }
+};
+
+export const findOneById = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findById(id, '-password -salt -tokenExpire -contacts');
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+    return res.status(200).send(user);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: err.message });
   }
 };
 
@@ -21,10 +34,10 @@ export const findOneByUsername = async (req, res, next) => {
     if (!user) {
       return res.status(404).send({ message: 'User not found' });
     }
-    return res.status(203).send(user);
+    return res.status(200).send(user);
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
+    res.status(400).send({ message: err.message });
   }
 };
 
@@ -32,37 +45,28 @@ export const updateUserInfo = async (req, res, next) => {
   const { userID } = req;
   const { firstName, lastName, company, position } = req.body;
   try {
-    let user = await User.findOne({ id: userID });
-    if (!user) {
-      return res.status(404).send({ message: 'User not found' });
-    }
-    user = { ...user, displayName: { firstName, lastName }, company, position };
-    await user.save();
-    return res.status(200).send({ message: 'Update successfully' });
+    await User.findByIdAndUpdate(userID, { firstName, lastName, company, position });
+    return res.status(202).send({ message: 'Update successfully' });
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
+    res.status(400).send({ message: err.message });
   }
 };
 
-export const addContacts = async (req, res, next) => {
+export const addContact = async (req, res, next) => {
   const { userID } = req;
-  let { contacts } = req.body; // [ { uid: '', note: '' } ]
+  const { partnerID } = req.body;
   try {
-    const user = await User.findOne({ id: userID });
+    const user = await User.findById(userID);
     if (!user) {
       return res.status(404).send({ message: 'User not found' });
     }
-    contacts = contacts.map(o => ({
-      uid: new mongoose.Types.ObjectId(o.uid),
-      note: o.note
-    }));
-    user.contacts = [...user.contacts, ...contacts];
+    user.contacts.push(new mongoose.Types.ObjectId(partnerID));
     await user.save();
     return res.status(200).send({ message: 'Update successfully' });
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
+    res.status(400).send({ message: err.message });
   }
 };
 
@@ -72,61 +76,32 @@ export const fakeContacts = async (req, res, next) => {
   if (secretKey != serverKey || !serverKey)
     return res.status(400).send('Định hack tao à. Không dễ đâu cưng :)');
 
-  const { userID, contacts } = req.body; // [ { uid: '', note: '' } ]
+  const { userID, contacts } = req.body; // contacts: [ userID ]
   try {
-    const user = await User.findOne({ id: userID });
+    const user = await User.findById(userID);
     if (!user) {
       return res.status(404).send({ message: 'User not found' });
     }
-    const _contacts = contacts.map(o => ({
-      uid: new mongoose.Types.ObjectId(o.uid),
-      note: o.note
-    }));
+    const _contacts = contacts.map(o => new mongoose.Types.ObjectId(o));
     user.contacts = [...user.contacts, ..._contacts];
     await user.save();
     return res.status(200).send({ message: 'Update successfully' });
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
+    res.status(400).send({ message: err.message });
   }
 };
 
 export const getContacts = async (req, res, next) => {
   const { userID } = req;
   try {
-    const user = await User.findOne({ id: userID }).populate('contacts.uid', '-password -salt -tokenExpire -contacts');
+    const user = await User.findById(userID).populate('contacts', '-password -salt -tokenExpire -contacts');
     if (!user) {
       return res.status(404).send({ message: 'User not found' });
     }
-    return res.status(200).send({ contacts: user.contacts });
+    return res.status(200).send(user.contacts);
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
-  }
-};
-
-export const getRecords = async (req, res, next) => {
-  const { userID } = req;
-  try {
-    const records = await Record.find({ userID }).populate('partner', '-password -salt -tokenExpire -contacts');
-    return res.status(200).send({ records });
-
-  } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
-  }
-};
-
-export const addRecord = async (req, res, next) => {
-  const { userID } = req;
-  const { partner, note } = req.body;
-  const record = new Record({ userID, partner: new mongoose.Types.ObjectId(partner), note });
-  record.id = record._id.toString();
-  try {
-    await record.save();
-    return res.status(201).send({ message: 'Create successfully' });
-  } catch (err) {
-    console.log(err);
-    res.status(500).send(err);
+    res.status(400).send({ message: err.message });
   }
 };

@@ -23,9 +23,9 @@ export async function createUser(req, res, next) {
 
 export async function fakeUser(req, res, next) {
   const secretKey = req.headers['secret-key'];
-  const serverKey = process.env.SECRET_KEY_FAKE_DB;
+  const serverKey = process.env.SECRET_KEY_API_TEST;
   if (secretKey != serverKey || !serverKey) {
-    return res.status(403).send('Định hack tao à. Không dễ đâu cưng :)');
+    return res.status(403).send('API is not implemented');
   }
 
   let user = new User(req.body);
@@ -57,7 +57,7 @@ export async function authorization(req, res, next) {
         return res.status(401).send({ message: 'Invalid token for request' });
       }
       const { id } = decoded;
-      const user = await User.findOne({ id }, 'tokenExpire');
+      const user = await User.findById(id, 'tokenExpire');
       if (!user || !user.tokenExpire) {
         return res.status(401).send({ message: 'Invalid token for request' });
       }
@@ -96,7 +96,7 @@ export const login = async (req, res, next) => {
       const tokenIssuedAt = Math.floor(new Date().getTime() / 1000);
       const tokenExpire = tokenIssuedAt + config.app.tokenExpire;
 
-      return User.findByIdAndUpdate({ id: user.id }, { tokenExpire }).then(() => {
+      return User.findByIdAndUpdate(user.id, { tokenExpire }).then(() => {
         user.tokenExpire = null;
         user.password = null;
         user.salt = null;
@@ -110,8 +110,8 @@ export const login = async (req, res, next) => {
   }
 };
 
-export const testAuthorized = async (req, res, next) => {
-  res.send({ message: 'Authorized' });
+export const testAuthenticated = async (req, res, next) => {
+  res.send({ message: 'Valid token. You are authenticated.' });
 };
 
 export const forgotPassword = async (req, res, next) => {
@@ -123,8 +123,9 @@ export const resetPassword = async (req, res, next) => {
 };
 
 export async function logout(req, res, next) {
+  const { userID } = req;
   try {
-    await User.findByIdAndUpdate({ id: req.userID }, { tokenExpire: null });
+    await User.findByIdAndUpdate(userID, { tokenExpire: null });
     return res.status(200).send({ message: 'Logout successfully' });
   } catch (err) {
     console.log(err);

@@ -4,6 +4,10 @@ const router = express.Router();
 
 import { VoteCtrl } from '../controllers';
 
+/**
+ * Prefix /api/vote/
+ */
+
 router.get('/', VoteCtrl.findAll);
 router.get('/:pollID/:userID', VoteCtrl.findOneByUser);
 router.post('/', VoteCtrl.create);
