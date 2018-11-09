@@ -120,6 +120,23 @@ export const forgotPassword = async (req, res, next) => {
 
 export const resetPassword = async (req, res, next) => {
   // TODO
+  const { userID } = req;
+  const { oldPassword, newPassword } = req.body;
+  try {
+    const user = await User.findById(userID);
+    if (!user) {
+      return res.status(404).send({ message: 'Something wrong. User is not exist' });
+    }
+    if (!user.authenticate(oldPassword)) {
+      return res.status(403).send({ message: 'Old password is not correct' });
+    }
+    user.password = newPassword;
+    await user.save();
+    return res.status(200).send({ message: 'Password is changed successfully' });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: err.message });
+  }
 };
 
 export async function logout(req, res, next) {

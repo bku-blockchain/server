@@ -96,10 +96,25 @@ Test user is authenticated.
 }
 ```
 
-#### POST /api/reset
+#### POST /api/reset - DONE
 Reset password
 
-TODO
++ Body: `{ oldPassword, newPassword }`
++ Response:
+
+Success:
+```json
+{
+    "message": "Password is changed successfully"
+}
+```
+
+Error:
+```json
+{
+    "message": "Old password is not correct"
+}
+```
 
 #### GET /api/logout - DONE
 ```json
