@@ -56,25 +56,21 @@ export const updateUserInfo = async (req, res, next) => {
 export const addContact = async (req, res, next) => {
   const { userID } = req;
   const { partnerID } = req.body;
-  try {
-    const user = await User.findById(userID);
-    if (!user) {
-      return res.status(404).send({ message: 'User not found' });
-    }
-    user.contacts.push(new mongoose.Types.ObjectId(partnerID));
-    await user.save();
-    return res.status(200).send({ message: 'Update successfully' });
-  } catch (err) {
-    console.log(err);
-    res.status(400).send({ message: err.message });
-  }
+  User.findByIdAndUpdate(userID, {
+    $addToSet: { contacts: new mongoose.Types.ObjectId(partnerID) }
+  })
+    .then(() => res.status(200).send({ message: 'Update successfully' }))
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send({ message: err.message });
+    });
 };
 
 export const fakeContacts = async (req, res, next) => {
   const secretKey = req.headers['secret-key'];
-  const serverKey = process.env.SECRET_KEY_FAKE_DB;
+  const serverKey = process.env.SECRET_KEY_API_TEST;
   if (secretKey != serverKey || !serverKey)
-    return res.status(400).send('Định hack tao à. Không dễ đâu cưng :)');
+    return res.status(400).send({ message: 'API is not implemented' });
 
   const { userID, contacts } = req.body; // contacts: [ userID ]
   try {

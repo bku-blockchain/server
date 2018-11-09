@@ -25,7 +25,7 @@ export async function fakeUser(req, res, next) {
   const secretKey = req.headers['secret-key'];
   const serverKey = process.env.SECRET_KEY_API_TEST;
   if (secretKey != serverKey || !serverKey) {
-    return res.status(403).send('API is not implemented');
+    return res.status(403).send({ message: 'API is not implemented' });
   }
 
   let user = new User(req.body);

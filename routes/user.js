@@ -10,7 +10,7 @@ import { UserCtrl } from '../controllers';
 
 router.get('/', UserCtrl.findAll);
 
-router.get('/:id', UserCtrl.findOneById);
+router.get('/id/:id', UserCtrl.findOneById);
 router.get('/:username', UserCtrl.findOneByUsername);
 
 router.put('/', UserCtrl.updateUserInfo);
