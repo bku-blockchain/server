@@ -70,17 +70,17 @@ Only support with enable environment secret key, add `secret-key` to headers
 + Response: `{ user }`
 
 ##### POST /api/test/fake/contact
-+ Body: { userID, contacts: [userID] }
-+ Response: { message: 'Update successfully' }
++ Body: `{ userID, contacts: [userID] }`
++ Response: 
 
 ### Authenticated
 
 To use the following APIs, should add token in body, query or headers to use. To add token:
 
-+ Use headers[authorization]
-+ Use headers[x-access-token]
-+ Use query (?token)
-+ Use body ({token})
++ Use `headers['authorization']`
++ Use `headers['x-access-token']`
++ Use `query (?token=)`
++ Use `body [token=]`
 
 #### GET /api/authenticated - DONE
 Test user is authenticated.

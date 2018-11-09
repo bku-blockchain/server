@@ -27,15 +27,14 @@ const fakeUser = () => {
   const password = 1;
 
   return {
-    username, email, password, tel, photoUrl, position, company,
-    displayName: { firstName, lastName }
+    username, email, password, tel, firstName, lastName, photoUrl, position, company
   };
 };
 
 const users = [];
-for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 20; i++) {
   users.push(fakeUser());
 }
 
 
-fs.writeFileSync(path.join(__dirname, './db_user.json'), JSON.stringify(users, null, 4));
+fs.writeFileSync(path.join(__dirname, '../db/users.json'), JSON.stringify(users, null, 4));
