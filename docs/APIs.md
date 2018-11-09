@@ -71,7 +71,12 @@ Only support with enable environment secret key, add `secret-key` to headers
 
 ##### POST /api/test/fake/contact
 + Body: `{ userID, contacts: [userID] }`
-+ Response: 
++ Use scripts to fake
+
+##### POST /api/test/fake/record
++ Body: `{ userID, partnerID, note, time }`
++ Response: `{ record }`
++ Use scripts to fake
 
 ### Authenticated
 

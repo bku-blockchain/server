@@ -29,3 +29,21 @@ export const addRecord = async (req, res, next) => {
     res.status(400).send({ message: err.message });
   }
 };
+
+export const fakeRecord = async (req, res, next) => {
+  const secretKey = req.headers['secret-key'];
+  const serverKey = process.env.SECRET_KEY_API_TEST;
+  if (secretKey != serverKey || !serverKey)
+    return res.status(400).send({ message: 'API is not implemented' });
+
+  const { userID, partnerID, note, time } = req.body;
+  const record = new Record({ userID, partner: new mongoose.Types.ObjectId(partnerID), note, time });
+  record.id = record._id.toString();
+  try {
+    await record.save();
+    return res.status(201).send(record);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: err.message });
+  }
+};

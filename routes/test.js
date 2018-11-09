@@ -4,7 +4,7 @@ const router = express.Router();
 
 export default router;
 
-import { AuthCtrl, UserCtrl } from '../controllers';
+import { AuthCtrl, UserCtrl, RecordCtrl } from '../controllers';
 
 /**
  * Prefix /api/test/
@@ -12,3 +12,4 @@ import { AuthCtrl, UserCtrl } from '../controllers';
 
 router.post('/fake/user', AuthCtrl.fakeUser);
 router.post('/fake/contact', UserCtrl.fakeContacts);
+router.post('/fake/record', RecordCtrl.fakeRecord);

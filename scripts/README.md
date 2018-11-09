@@ -1,4 +1,4 @@
-+ fake-user
-+ api-user
-+ fake-contact
-+ api-contact
++ gen_users
++ api_users
++ gen_contact
++ api_contact
