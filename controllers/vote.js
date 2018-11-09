@@ -14,7 +14,7 @@ export const findAll = async (req, res, next) => {
   })
     .catch((err) => {
       console.log(err);
-      res.status(500).send({ message: err.message });
+      res.status(400).send({ message: err.message });
     });
 };
 
@@ -29,7 +29,7 @@ export const findOneByUser = async (req, res, next) => {
   })
     .catch((err) => {
       console.log(err);
-      res.status(500).send({ message: err.message });
+      res.status(400).send({ message: err.message });
     });
 };
 
@@ -93,7 +93,7 @@ export const create = async (req, res, next) => {
 
   } catch (err) {
     console.log(err);
-    res.status(500).send({ message: err.message });
+    res.status(400).send({ message: err.message });
   }
 
 };

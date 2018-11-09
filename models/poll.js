@@ -28,10 +28,15 @@ const PollSchema = new Schema({
     type: Date,
     required: 'Please choose a end date'
   },
+  photoUrl: {
+    type: String,
+    default: ''
+  },
   candidates: [{
     id: String,
     name: String,
-    description: String
+    description: String,
+    photoUrl: String
   }],
   eth: {
     contractAddress: String,

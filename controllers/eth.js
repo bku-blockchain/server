@@ -74,7 +74,8 @@ export const deployPollContract = async ({ poll }, cb) => {
       data: bytecode
     });
 
-    const gasLimit = await txInstance.estimateGas();
+    // const gasLimit = await txInstance.estimateGas();
+    const gasLimit = web3.utils.toHex(1e5);
     console.log('Gas limit:', gasLimit);
 
     txInstance.send({
@@ -92,9 +93,10 @@ export const deployPollContract = async ({ poll }, cb) => {
         cb(null, poll);
       })
       .on('receipt', (receipt) => {
-        Poll.findOneAndUpdate({ id: poll.id }, { 'eth.contractAddress': receipt.contractAddress })
+        console.log('Receipt:', receipt);
+        Poll.findByIdAndUpdate(poll.id, { 'eth.contractAddress': receipt.contractAddress })
           .then(() => {
-            console.log('Update Poll ID: ', poll.id);
+            console.log('Update poll: ', poll.id);
           });
       })
       .on('error', (err) => { console.log(err); });

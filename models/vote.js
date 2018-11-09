@@ -13,7 +13,8 @@ const VoteSchema = new Schema({
     required: 'Vote should be used for a Poll, required pollID'
   },
   userID: {
-    type: String
+    type: String,
+    required: 'User is required'
   },
   ballots: [{
     id: String

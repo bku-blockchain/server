@@ -204,3 +204,36 @@ Add a record
     "message": "Create successfully"
 }
 ```
+
+
+
+
+
+
+#### GET /api/poll
+Get list of current polls, recently start
+
+#### GET /api/poll/past
+Get list of past polls, recently end
+
+#### GET /api/poll/future
+Get list of future polls, coming soon
+
+`[ { poll_1 }, { poll_2 }, { poll_3 } ]`
+
+
+#### GET /api/poll/:id
+Get poll by ID
+
+```json
+
+```
+
+#### POST /api/poll
+Create new poll, deploy new smart contract
+
++ Body: `{ eventID, ownerID, title, description, startDate, endDate, candidates }`
+
++ Response:
+
+

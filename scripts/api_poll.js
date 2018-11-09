@@ -1,12 +1,13 @@
 const axios = require('axios').default;
 
 const data = {
-  eventID: 'EV0002',
-  ownerID: 'USR0002',
-  title: 'Lorem Ipsum',
-  description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+  eventID: 'EVT_0000001',
+  ownerID: 'USR_0000001',
+  title: 'Bình chọn VTV Awards 2018',
+  description: '',
   startDate: Math.round(new Date().getTime()) - 5 * 24 * 60 * 60 * 1000,
   endDate: Math.round(new Date().getTime()) + 30 * 24 * 60 * 60 * 1000,
+  photoUrl: '',
   candidates: [
     { name: 'At vero eos et accusamus et iusto odio dignissimos ducimus' },
     { name: 'On the other hand, we denounce with righteous indignation' },
