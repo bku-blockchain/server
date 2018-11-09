@@ -9,7 +9,9 @@
     "lint:sol": "solium -d ./",
     "lint:sol:fix": "solium -d ./ --fix",
     "lint:all": "npm run lint && npm run lint:sol",
-    "lint:all:fix": "npm run lint:fix && npm run lint:sol:fix"
+    "lint:all:fix": "npm run lint:fix && npm run lint:sol:fix",
+    "sol": "truffle compile",
+    "evm": "ganache-cli"
   },
   "dependencies": {
     "async": "^2.6.1",
