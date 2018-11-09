@@ -28,17 +28,21 @@ const UserSchema = new Schema({
     trim: true,
     required: 'Tel is required'
   },
-  displayName: {
-    firstName: {
-      type: String,
-      trim: true,
-      default: ''
-    },
-    lastName: {
-      type: String,
-      trim: true,
-      default: ''
-    }
+  active: {
+    type: Boolean,
+    default: false
+  },
+  firstName: {
+    type: String,
+    trim: true,
+    default: '',
+    maxlength: 20
+  },
+  lastName: {
+    type: String,
+    trim: true,
+    default: '',
+    maxlength: 20
   },
   photoUrl: {
     type: String,
@@ -58,23 +62,9 @@ const UserSchema = new Schema({
   },
   salt: String,
   tokenExpire: Number,
-  active: {
-    type: Boolean,
-    default: false
-  },
   contacts: [{
-    uid: {
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    time: {
-      type: Date,
-      default: new Date()
-    },
-    note: {
-      type: String,
-      default: ''
-    }
+    type: Schema.Types.ObjectId,
+    ref: 'User'
   }]
 }, {
   timestamps: {

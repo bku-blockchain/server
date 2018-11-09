@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import nodemailer from 'nodemailer';
 import mongoose from 'mongoose';
 
 import * as config from '../config';
@@ -8,25 +7,26 @@ const User = mongoose.model('User');
 
 
 export async function createUser(req, res, next) {
-  const { username, email, password, tel } = req.body;
-  const user = new User({ username, email, password, tel });
+  const { username, email, password, tel, firstName, lastName, photoUrl, company, position } = req.body;
+  const user = new User({ username, email, password, tel, firstName, lastName, photoUrl, company, position });
   user.id = user._id.toString();
 
   try {
     await user.save();
-    res.status(201).send({ message: 'Create Successfully' });
+    return res.status(201).send({ message: 'Created successfully' });
 
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
+    res.status(400).send({ message: err.message });
   }
 }
 
 export async function fakeUser(req, res, next) {
   const secretKey = req.headers['secret-key'];
   const serverKey = process.env.SECRET_KEY_FAKE_DB;
-  if (secretKey != serverKey || !serverKey)
-    return res.status(400).send('Định hack tao à. Không dễ đâu cưng :)');
+  if (secretKey != serverKey || !serverKey) {
+    return res.status(403).send('Định hack tao à. Không dễ đâu cưng :)');
+  }
 
   let user = new User(req.body);
   user.id = user._id.toString();
@@ -40,36 +40,36 @@ export async function fakeUser(req, res, next) {
 
   } catch (err) {
     console.log(err);
-    res.status(500).send(err);
+    res.status(400).send({ message: err.message });
   }
 }
 
 export async function authorization(req, res, next) {
+  // Accept token in body, query, headers (x-access-token, authorization)
   const token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers.authorization;
   if (!token) {
-    return res.status(400).send({ message: 'Require authentication token for request.' });
+    return res.status(401).send({ message: 'Require authentication token for request.' });
   }
   try {
     jwt.verify(token, config.app.secretKey, async (err, decoded) => {
-      /**
-       * decoded: { id, username, iat: issueAt, exp: expire }
-       */
+      // decoded: { id, username, iat: issueAt, exp: expire }
       if (err) {
-        return res.send({ message: 'Invalid Token' });
+        return res.status(401).send({ message: 'Invalid token for request' });
       }
       const { id } = decoded;
       const user = await User.findOne({ id }, 'tokenExpire');
       if (!user || !user.tokenExpire) {
-        return res.send({ message: 'Invalid Token' });
+        return res.status(401).send({ message: 'Invalid token for request' });
       }
 
       req.userID = id;
+
       next();
     });
 
   } catch (err) {
     console.log(err);
-    res.status(500).send({ message: err.message });
+    res.status(400).send({ message: err.message });
   }
 }
 
@@ -78,29 +78,35 @@ export const login = async (req, res, next) => {
   try {
     const user = await User.findOne({ username }, '-contacts');
     if (!user) {
-      return res.status(404).send({ message: 'No user exists with such email' });
+      return res.status(404).send({ message: 'No user exists with such username' });
     }
     if (!user.authenticate(password)) {
-      return res.status(401).send({ message: 'Password is not correct' });
+      return res.status(400).send({ message: 'Password is not correct' });
     }
-    user.password = null;
-    user.salt = null;
-    user.tokenExpire = null;
 
-    jwt.sign({
-      id: user.id,
-      username: user.username
-    }, config.app.secretKey, { expiresIn: config.app.tokenExpire }, async (err, token) => {
-      if (err) throw err;
-      await User.findOneAndUpdate({ username }, {
-        tokenExpire: Math.floor(new Date().getTime() / 1000 + config.app.tokenExpire)
+    const payload = { id: user.id, username: user.username };
+
+    jwt.sign(payload, config.app.secretKey, {
+      expiresIn: config.app.tokenExpire
+    }, async (err, token) => {
+      if (err) {
+        return res.status(500).send({ message: err.message });
+      }
+
+      const tokenIssuedAt = Math.floor(new Date().getTime() / 1000);
+      const tokenExpire = tokenIssuedAt + config.app.tokenExpire;
+
+      return User.findByIdAndUpdate({ id: user.id }, { tokenExpire }).then(() => {
+        user.tokenExpire = null;
+        user.password = null;
+        user.salt = null;
+        res.status(200).send({ user, token, tokenExpire, tokenIssuedAt });
       });
-      res.status(200).send({ user, token });
     });
 
   } catch (err) {
     console.log(err);
-    res.send({ message: err.message });
+    res.status(400).send({ message: err.message });
   }
 };
 
@@ -118,10 +124,10 @@ export const resetPassword = async (req, res, next) => {
 
 export async function logout(req, res, next) {
   try {
-    await User.findOneAndUpdate({ id: req.userID }, { tokenExpire: null });
+    await User.findByIdAndUpdate({ id: req.userID }, { tokenExpire: null });
     return res.status(200).send({ message: 'Logout successfully' });
   } catch (err) {
     console.log(err);
-    res.status(500).send({ message: err.message });
+    res.status(400).send({ message: err.message });
   }
 }

@@ -8,11 +8,13 @@ const RecordSchema = new Schema({
     unique: true
   },
   userID: {
-    type: String
+    type: String,
+    required: 'User is required'
   },
   partner: {
     type: Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required: 'Partner is required'
   },
   time: {
     type: Date,
@@ -22,7 +24,6 @@ const RecordSchema = new Schema({
     type: String,
     default: ''
   }
-
 }, {
   timestamps: {
     createdAt: 'createdAt',
