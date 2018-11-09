@@ -74,8 +74,7 @@ export const deployPollContract = async ({ poll }, cb) => {
       data: bytecode
     });
 
-    // const gasLimit = await txInstance.estimateGas();
-    const gasLimit = web3.utils.toHex(1e5);
+    const gasLimit = await txInstance.estimateGas();
     console.log('Gas limit:', gasLimit);
 
     txInstance.send({

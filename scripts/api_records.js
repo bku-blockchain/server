@@ -5,7 +5,6 @@ const path = require('path');
 
 const data = require('../db/records.json');
 
-// const url = 'http://bku-blockchain-most.tk/api/test/fake/record';
 const url = 'http://localhost:4200/api/test/fake/record';
 
 const created = [];
