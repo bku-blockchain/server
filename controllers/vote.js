@@ -9,7 +9,7 @@ const Vote = mongoose.model('Vote');
 
 // Only for test
 export const findAll = async (req, res, next) => {
-  Vote.find().exec().then((votes) => {
+  Vote.find().limit(20).then((votes) => {
     res.status(203).send(votes);
   })
     .catch((err) => {
@@ -18,10 +18,21 @@ export const findAll = async (req, res, next) => {
     });
 };
 
+export const findInOnePoll = async (req, res, next) => {
+  const { pollID } = req.params;
+  Vote.find({ pollID }).limit(20).then((votes) => {
+    res.status(203).send(votes);
+  })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send({ message: err.message });
+    });
+};
+
+
 export const findOneByUser = async (req, res, next) => {
   const { userID, pollID } = req.params;
-  console.log(userID, pollID);
-  Vote.findOne({ userID, pollID }).exec().then((vote) => {
+  Vote.findOne({ userID, pollID }).then((vote) => {
     if (!vote) {
       return res.status(404).send({ message: 'User not vote' });
     }

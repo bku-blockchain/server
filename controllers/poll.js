@@ -45,10 +45,10 @@ export const findFuturePolls = (req, res, next) => {
 };
 
 export const create = async (req, res, next) => {
-  const { eventID, ownerID, title, description, startDate, endDate, candidates } = req.body;
+  const { eventID, ownerID, title, description, photoUrl, startDate, endDate, candidates } = req.body;
   try {
     const poll = new Poll({
-      eventID, ownerID, title, description,
+      eventID, ownerID, title, description, photoUrl,
       startDate: new Date(startDate),
       endDate: new Date(endDate),
       candidates

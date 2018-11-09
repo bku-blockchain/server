@@ -210,24 +210,89 @@ Add a record
 
 
 
-#### GET /api/poll
+#### GET /api/poll - DONE
 Get list of current polls, recently start
 
-#### GET /api/poll/past
+#### GET /api/poll/past - DONE
 Get list of past polls, recently end
 
-#### GET /api/poll/future
+#### GET /api/poll/future - DONE
 Get list of future polls, coming soon
 
 `[ { poll_1 }, { poll_2 }, { poll_3 } ]`
 
-
-#### GET /api/poll/:id
-Get poll by ID
+Examples
 
 ```json
-
+[
+    {
+        "eth": {
+            "ownerAddress": "0x9338063cd5c8f069334925345FaDc94a8E45742f",
+            "contractSecretKey": "0x846578b171e13f9b318decfc7c818ac7f4fc53fc1b91b62fed3750456ad3c76f",
+            "txHash": "0xbd48cae052e0480ec2f1109343e72196593392604e6af69e1f9cf87d14046763",
+            "contractAddress": "0x460b2ACcbe6fC8a43467c48Cd75258b5c86feBe5"
+        },
+        "photoUrl": "",
+        "_id": "5be5b2528b0aca2070e839db",
+        "eventID": "VTV_AWARDS_2018",
+        "ownerID": "VTV_ADMIN",
+        "title": "Bình chọn VTV Awards 2018. Hạng mục Hình ảnh thời sự ấn tượng",
+        "description": "Khép lại vòng bình chọn 1, hôm nay (22/8), danh sách top 5 đề cử của 10 hạng mục giải thưởng VTV Awards 2018 đã được công bố. Theo kết quả vòng 1, những đề cử trong top 5 đều là những gương mặt, những chương trình và những bộ phim được khán giả truyền hình yêu thích trong năm qua.\n\n  50 đề cử vượt qua vòng 1 này sẽ tiếp tục bước vào cuộc đua ở vòng thứ 2. Ở vòng 2 này, bên cạnh sự bình chọn của khán giả còn có sự tham gia của các chuyên gia hàng đầu trong các lĩnh vực đề cử. Điểm bình chọn của khán giả cộng điểm bình chọn của các chuyên gia rồi chia đều sẽ chọn ra đề cử giành chiến thắng.\n\n  Thời gian bình chọn vòng 2 bắt đầu từ ngày 22/8 và kết thúc vào 7h09' ngày 7/9/2018. Sau thời gian trên, cổng bình chọn sẽ đóng, Ban tổ chức sẽ tổng hợp kết quả và công bố, trao giải cho các đề cử chiến thắng vào Lễ trao giải VTV Awards - Sắc màu 2018.",
+        "startDate": "2018-11-08T16:02:24.307Z",
+        "endDate": "2018-12-29T16:02:24.307Z",
+        "candidates": [
+            {
+                "_id": "5be5b2528b0aca2070e839e0",
+                "name": "Chiến sĩ phòng cháy chữa cháy tay bị bỏng trong vụ cháy chung cư Carina - SBD 136",
+                "description": "",
+                "photoUrl": "",
+                "id": "5be5b2528b0aca2070e839e0"
+            },
+            {
+                "_id": "5be5b2528b0aca2070e839df",
+                "name": "Công chức đi lễ chùa trong giờ hành chính - SBD 62",
+                "description": "",
+                "photoUrl": "",
+                "id": "5be5b2528b0aca2070e839df"
+            },
+            {
+                "_id": "5be5b2528b0aca2070e839de",
+                "name": "Người dân cả nước ăn mừng chiến thắng của đội tuyển U23 Việt Nam và hình ảnh đội tuyển VN tại SVĐ Thường Châu trong trận đấu với Uzberkistan - SBD 24",
+                "description": "",
+                "photoUrl": "",
+                "id": "5be5b2528b0aca2070e839de"
+            },
+            {
+                "_id": "5be5b2528b0aca2070e839dd",
+                "name": "Khai thác titan tan phá môi trường - SBD 198",
+                "description": "",
+                "photoUrl": "",
+                "id": "5be5b2528b0aca2070e839dd"
+            },
+            {
+                "_id": "5be5b2528b0aca2070e839dc",
+                "name": "Thủ đoạn rút ruột xăng dầu - SBD 31",
+                "description": "",
+                "photoUrl": "",
+                "id": "5be5b2528b0aca2070e839dc"
+            }
+        ],
+        "id": "5be5b2528b0aca2070e839db",
+        "createdAt": "2018-11-09T16:14:14.190Z",
+        "updatedAt": "2018-11-09T16:14:22.012Z",
+        "__v": 0
+		},
+		{
+			"...": "..."
+		}
+]
 ```
+
+#### GET /api/poll/:id - DONE
+Get poll by ID
+
+`{ poll }` poll such as above example
+
 
 #### POST /api/poll
 Create new poll, deploy new smart contract
@@ -236,4 +301,31 @@ Create new poll, deploy new smart contract
 
 + Response:
 
+`{ poll }` poll such as above example
 
+
+
+#### GET /api/vote
+Get votes list
+
+`[ { vote1 }, { vote2 } ]`
+
+#### GET /api/vote/:pollID
+Get votes in a poll
+
+`[ { vote1 }, { vote2 } ]`
+
+#### GET /api/vote/:pollID/:userID
+Get vote of a user in a poll
+
+`{ vote2 }`
+
+
+#### POST /api/vote
+Create new vote, send transaction to smart contract
+
++ Body: `{ pollID, ballots }` with `ballots: [ { id: String }, ... ]`
+
++ Response:
+
+`{ vote }`
