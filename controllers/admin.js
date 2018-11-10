@@ -38,6 +38,17 @@ export const getAllVotes = async (req, res, next) => {
   }
 };
 
+export const getAllRecords = async (req, res, next) => {
+  const { userID } = req.params;
+  try {
+    const records = await Record.find({ userID }).populate('partner');
+    return res.status(200).send(records);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: err.message });
+  }
+};
+
 export const getUserByUsername = async (req, res, next) => {
   const { username } = req.params;
   try {
