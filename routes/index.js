@@ -1,6 +1,7 @@
 import express from 'express';
 
 import test from './test';
+import admin from './admin';
 import auth from './auth';
 import user from './user';
 import contact from './contact';
@@ -12,6 +13,7 @@ const router = express.Router();
 
 /** Routes for fake database, only enabled when environment is set */
 router.use('/api/test', test);
+router.use('/api/admin', admin);
 
 router.use('/api', auth);
 
