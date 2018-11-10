@@ -22,17 +22,17 @@ app.use(cookieParser());
 app.use(helmet({ frameguard: { action: 'deny' } }));
 app.use(compression());
 
-app.use(express.static(path.join(__dirname, './public/')));
+app.use(express.static(path.join(__dirname, './views')));
 
-app.get('/', (req, res, next) => {
-  res.sendFile(path.join(__dirname, './views/index.html'));
-});
+// app.get('/', (req, res, next) => {
+//   res.sendFile(path.join(__dirname, './views/index.html'));
+// });
 
 app.use('/', routes);
 
 // redirect other path to ./build
 app.get('*', (req, res, next) => {
-  res.sendFile(path.join(__dirname, './build/index.html'));
+  res.sendFile(path.join(__dirname, './views/index.html'));
 });
 
 // catch 404 and forward to error handler
