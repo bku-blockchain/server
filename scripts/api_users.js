@@ -23,6 +23,6 @@ async.eachSeries(users, (user, cb) => {
     process.exit(0);
   }
   console.log('Fake success');
-  fs.writeFileSync(path.join(__dirname, './db_user.json'), JSON.stringify(createdUsers, null, 4));
+  fs.writeFileSync(path.join(__dirname, '../db/users.json'), JSON.stringify(createdUsers, null, 4));
   console.log('Write success');
 });
