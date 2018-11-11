@@ -4,16 +4,16 @@ self.__precacheManifest = [
     "url": "/static/media/logo_white.181c89d7.png"
   },
   {
-    "revision": "e56f4837fc40f48f0fc7",
-    "url": "/static/css/main.cd103fc1.chunk.css"
+    "revision": "058b0978e9fab0ea8cab",
+    "url": "/static/css/main.d02f714b.chunk.css"
   },
   {
-    "revision": "48ac036da7c7923266266f63746fc5f1",
-    "url": "/static/media/nucleo-icons.48ac036d.ttf"
+    "revision": "5c78b4cf03771fd2287325c44f0d3cd9",
+    "url": "/static/media/nucleo-icons.5c78b4cf.woff2"
   },
   {
-    "revision": "bd660afe3069927537b2",
-    "url": "/static/js/1.bd660afe.chunk.js"
+    "revision": "cb599f4080c1338dd0f7",
+    "url": "/static/js/1.cb599f40.chunk.js"
   },
   {
     "revision": "229c360febb4351a89df",
@@ -21,15 +21,11 @@ self.__precacheManifest = [
   },
   {
     "revision": "a6f24e7dd5470a8bd2f48ebb53dbe8d5",
-    "url": "/static/media/damir-bosnjak.a6f24e7d.jpg"
+    "url": "/static/media/banner_avatar.a6f24e7d.jpg"
   },
   {
-    "revision": "e56f4837fc40f48f0fc7",
-    "url": "/static/js/main.e56f4837.chunk.js"
-  },
-  {
-    "revision": "5c78b4cf03771fd2287325c44f0d3cd9",
-    "url": "/static/media/nucleo-icons.5c78b4cf.woff2"
+    "revision": "058b0978e9fab0ea8cab",
+    "url": "/static/js/main.058b0978.chunk.js"
   },
   {
     "revision": "f32ed5ad3d76067b8e43be1a0bd1ba91",
@@ -40,11 +36,15 @@ self.__precacheManifest = [
     "url": "/static/media/nucleo-icons.6836b93b.woff"
   },
   {
-    "revision": "bd660afe3069927537b2",
+    "revision": "48ac036da7c7923266266f63746fc5f1",
+    "url": "/static/media/nucleo-icons.48ac036d.ttf"
+  },
+  {
+    "revision": "cb599f4080c1338dd0f7",
     "url": "/static/css/1.379bc96a.chunk.css"
   },
   {
-    "revision": "1465b418b2058a8b39bf504409d7591b",
+    "revision": "68b6a8a19ce41ecd149de82b4d48657c",
     "url": "/index.html"
   }
 ];
