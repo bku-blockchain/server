@@ -22,6 +22,9 @@ const web3 = new Web3(new Web3.providers.HttpProvider(provider));
 const { abi, bytecode } = PollingContractJSON;
 const gasPrice = web3.utils.toHex(1e9);
 
+const accountIsFree = []; // Mark if ETH Account is free (true/false), default is true => free
+let numberAccounts = 0;
+
 /**
  * Configure Functions
  * use async for similar with configDefaultAccount_Local
@@ -34,6 +37,12 @@ const configDefaultAccount_TestNet = async () => {
   const privateKey = config.eth.ropstenPrivateKey;
   const account = web3.eth.accounts.privateKeyToAccount(`0x${privateKey}`);
   web3.eth.accounts.wallet.add(account);
+
+  // add test accounts
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(`0x${process.env.ROPSTEN_PRIVATE_KEY_A}`));
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(`0x${process.env.ROPSTEN_PRIVATE_KEY_B}`));
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(`0x${process.env.ROPSTEN_PRIVATE_KEY_C}`));
+  web3.eth.accounts.wallet.add(web3.eth.accounts.privateKeyToAccount(`0x${process.env.ROPSTEN_PRIVATE_KEY_D}`));
 
   /** Set the default account, used to `from` */
   web3.eth.defaultAccount = account.address;
@@ -52,6 +61,12 @@ const configDefaultAccount = async () => {
   }
 
   console.log('Default account address:', web3.eth.defaultAccount);
+
+  // Mark free for all account
+  numberAccounts = web3.eth.accounts.wallet.length;
+  for (let i = 0; i < numberAccounts; i++) {
+    accountIsFree.push(true);
+  }
 };
 
 
@@ -60,6 +75,36 @@ const configDefaultAccount = async () => {
  * Functions
  * ==========================================================================
  * */
+
+
+/**
+  * Retrieve free account
+  * Return index, address and nonce for pending
+  */
+export const initAccount = async () => {
+  // find free account now
+  const index = accountIsFree.indexOf(true);
+  let address = null;
+  if (index != -1) { // exist free account
+    accountIsFree[index] = false; // mark busy with waiting nonce
+    address = web3.eth.accounts.wallet[index].address;
+    console.log('Index set False:', index);
+  } else {
+    // TODO: ???
+  }
+
+  console.log('Address:', address);
+
+  // get Nonce with option pending, for handle parallel request
+  const nonce = await web3.eth.getTransactionCount(address, 'pending');
+  console.log('Nonce:', nonce);
+
+  return { address, index, nonce };
+};
+
+/**
+ * Deploy new smart contract
+ */
 export const deployPollContract = async ({ poll }, cb) => {
   const startDate = Math.floor(new Date(poll.startDate).getTime() / 1000);
   const endDate = Math.floor(new Date(poll.endDate).getTime() / 1000);
@@ -77,15 +122,23 @@ export const deployPollContract = async ({ poll }, cb) => {
     const gasLimit = await txInstance.estimateGas();
     console.log('Gas limit:', gasLimit);
 
+    const { address, index, nonce } = await initAccount();
+
     txInstance.send({
-      from: web3.eth.defaultAccount,
+      from: address,
       gas: gasLimit,
-      gasPrice
+      gasPrice,
+      nonce
     })
       .on('transactionHash', (txHash) => {
         console.log('Transaction Hash:', txHash);
+        // mark address is free now
+        if (index != -1) {
+          console.log('Index set True:', index);
+          accountIsFree[index] = true;
+        }
         poll.eth = {
-          ownerAddress: web3.eth.defaultAccount,
+          ownerAddress: address,
           contractSecretKey: secretKey,
           txHash
         };
@@ -105,6 +158,9 @@ export const deployPollContract = async ({ poll }, cb) => {
   }
 };
 
+/**
+ * Send transaction
+ */
 export const createVoting = async ({ vote, contractAddress, secretKey, userID, hashValue }, cb) => {
   try {
     const PollingContract = new web3.eth.Contract(abi, contractAddress);
@@ -117,13 +173,21 @@ export const createVoting = async ({ vote, contractAddress, secretKey, userID, h
     const gasLimit = web3.utils.toHex(1e5);
     console.log('Gas limit:', gasLimit);
 
+    const { address, index, nonce } = await initAccount();
+
     txInstance.send({
-      from: web3.eth.defaultAccount,
+      from: address,
       gas: gasLimit,
-      gasPrice
+      gasPrice,
+      nonce
     })
       .on('transactionHash', (txHash) => {
         console.log('Transaction Hash:', txHash);
+        // mark address is free now
+        if (index != -1) {
+          console.log('Index set True:', index);
+          accountIsFree[index] = true;
+        }
         vote.eth = { txHash };
         cb(null, vote);
       })
