@@ -63,8 +63,10 @@ const configDefaultAccount = async () => {
   console.log('Default account address:', web3.eth.defaultAccount);
 
   // Mark free for all account
+  console.log('Wallet Accounts:');
   numberAccounts = web3.eth.accounts.wallet.length;
   for (let i = 0; i < numberAccounts; i++) {
+    console.log(web3.eth.accounts.wallet[i].address, web3.eth.accounts.wallet[i].privateKey);
     accountIsFree.push(true);
   }
 };
@@ -93,13 +95,20 @@ export const initAccount = async () => {
     // TODO: ???
   }
 
-  console.log('Address:', address);
+  console.log('Selected Address:', address);
 
   // get Nonce with option pending, for handle parallel request
   const nonce = await web3.eth.getTransactionCount(address, 'pending');
   console.log('Nonce:', nonce);
 
   return { address, index, nonce };
+};
+
+export const freeAccount = (index) => {
+  if (index != -1) {
+    console.log('Index set True:', index);
+    accountIsFree[index] = true;
+  }
 };
 
 /**
@@ -119,10 +128,14 @@ export const deployPollContract = async ({ poll }, cb) => {
       data: bytecode
     });
 
-    const gasLimit = await txInstance.estimateGas();
-    console.log('Gas limit:', gasLimit);
-
     const { address, index, nonce } = await initAccount();
+
+    const gasLimit = await txInstance.estimateGas({
+      from: address,
+      gasPrice,
+      nonce
+    });
+    console.log('Gas limit:', gasLimit);
 
     txInstance.send({
       from: address,
@@ -133,10 +146,7 @@ export const deployPollContract = async ({ poll }, cb) => {
       .on('transactionHash', (txHash) => {
         console.log('Transaction Hash:', txHash);
         // mark address is free now
-        if (index != -1) {
-          console.log('Index set True:', index);
-          accountIsFree[index] = true;
-        }
+        freeAccount(index);
         poll.eth = {
           ownerAddress: address,
           contractSecretKey: secretKey,
@@ -151,7 +161,11 @@ export const deployPollContract = async ({ poll }, cb) => {
             console.log('Update poll: ', poll.id);
           });
       })
-      .on('error', (err) => { console.log(err); });
+      .on('error', (err) => {
+        // mark address is free now
+        freeAccount(index);
+        cb(err);
+      });
 
   } catch (err) {
     cb(err);
@@ -175,6 +189,8 @@ export const createVoting = async ({ vote, contractAddress, secretKey, userID, h
 
     const { address, index, nonce } = await initAccount();
 
+    console.log('Gas limit:', gasLimit);
+
     txInstance.send({
       from: address,
       gas: gasLimit,
@@ -184,14 +200,11 @@ export const createVoting = async ({ vote, contractAddress, secretKey, userID, h
       .on('transactionHash', (txHash) => {
         console.log('Transaction Hash:', txHash);
         // mark address is free now
-        if (index != -1) {
-          console.log('Index set True:', index);
-          accountIsFree[index] = true;
-        }
+        freeAccount(index);
         vote.eth = { txHash };
         cb(null, vote);
       })
-      .on('error', (err) => { console.log(err); });
+      .on('error', (err) => { freeAccount(index); cb(err); });
 
   } catch (err) {
     cb(err);

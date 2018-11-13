@@ -70,7 +70,6 @@ contract Polling {
     }
     
     function createVoting(bytes32 _secretKey, bytes32 uid, bytes32 hashValue) public
-        shouldBeOwner()
         shouldBeAuthorized(_secretKey)
         shouldBeValidTime()
         shouldBeValidUser(uid)

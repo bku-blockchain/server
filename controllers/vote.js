@@ -91,7 +91,10 @@ export const create = async (req, res, next) => {
       hashValue: vote.hashValue,
       secretKey: poll.eth.contractSecretKey
     }, async (err, vote) => {
-      if (err) throw err;
+      if (err) {
+        console.log(err);
+        return res.status(500).send({ message: err.message });
+      }
 
       console.log('Voting is pushed');
       console.log(vote);
