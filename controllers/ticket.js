@@ -166,7 +166,7 @@ exports.createBooth = (req, res) => {
     // bid: req.body.bid,
     booth_name: req.body.booth_name,
     host: req.body.host,
-    starting_date: req.body.starting_date,
+    starting_date: new Date(req.body.starting_date),
     photo_url: req.body.photo_url,
     vid: req.body.vid
   });
