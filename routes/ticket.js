@@ -10,9 +10,9 @@ import { TicketCtrl } from '../controllers';
 
 router.get('/tickets', TicketCtrl.getTickets);
 router.post('/tickets', TicketCtrl.createTicket);
-router.get('/tickets/:tid', TicketCtrl.getTicket);
+router.get('/tickets/:tid', TicketCtrl.getTicketByID);
 
-router.get('/users/:uid', TicketCtrl.getUser);
+router.get('/users/:uid', TicketCtrl.getTicketByUserID);
 
 router.get('/events', TicketCtrl.getEvents);
 
@@ -25,10 +25,10 @@ router.post('/booths', TicketCtrl.createBooth);
 router.get('/entries', TicketCtrl.getEntries);
 router.post('/entries', TicketCtrl.createEntry);
 
-router.get('/interests', TicketCtrl.getInterests);
+router.get('/interests', TicketCtrl.getAllInterests);
 router.post('interests', TicketCtrl.createInterest);
-router.get('/interests/:uid', TicketCtrl.getInterest);
-router.put('/interests/:Uid', TicketCtrl.updateInterest);
+router.get('/interests/:uid', TicketCtrl.getInterestByUserID);
+router.put('/interests/:uid', TicketCtrl.updateInterest);
 
 export default router;
 

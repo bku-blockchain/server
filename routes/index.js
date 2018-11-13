@@ -16,6 +16,9 @@ const router = express.Router();
 router.use('/api/test', test);
 router.use('/api/admin', admin);
 
+/** TODO: Deadline !!!, don't check token */
+router.use('/api/ticket', ticket);
+
 router.use('/api', auth);
 
 router.use('/api/user', user);
@@ -23,6 +26,5 @@ router.use('/api/contact', contact);
 router.use('/api/record', record);
 router.use('/api/poll', poll);
 router.use('/api/vote', vote);
-router.use('/api/ticket', ticket);
 
 export default router;
