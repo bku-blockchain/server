@@ -23,7 +23,7 @@ export const getRecordsWithPartnerID = async (req, res, next) => {
   const { partnerID } = req.params;
   try {
     const records = await Record.find({ userID, partner: partnerID })
-      .populate('partner', '-password -salt -tokenExpire -contacts',)
+      .populate('partner', '-password -salt -tokenExpire -contacts')
       .sort({ time: -1 })
       .limit(20);
     return res.status(200).send(records);
