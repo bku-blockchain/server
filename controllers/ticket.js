@@ -14,6 +14,9 @@ const ticketContractABI = require('../build/TicketContractABI');
 
 const ticketContract = new web3js.eth.Contract(ticketContractABI, ticketContractAddress);
 
+console.log('ETH Address Ticket:', myAddress);
+console.log('ETH Private Key Ticket:', privateKey);
+
 const
   Ticket = mongoose.model('Ticket'),
   Event = mongoose.model('Event'),
@@ -39,15 +42,18 @@ exports.getTicketByID = (req, res) => {
 };
 
 exports.createTicket = (req, res) => {
+  console.log(req.body.uid);
   const newTicket = new Ticket({
     uid: req.body.uid
   });
+  console.log(newTicket);
 
   // Generate Ticket ID
   newTicket.tid = keccak256(newTicket.uid + newTicket.created_date + uniqid());
 
   console.log('Create new ticket:', newTicket.tid);
   console.log('User ID:', newTicket.uid);
+  console.log('Ticket:', newTicket);
 
   // Execute contract
   const uid = `0x${Buffer.from(newTicket.uid, 'utf8').toString('hex')}`;
@@ -85,7 +91,8 @@ exports.createTicket = (req, res) => {
           tid: newTicket.tid
         }, {
           $set: {
-            etherscan_url: url
+            etherscan_url: url,
+            txHash: txRes
           }
         }, {
           new: true
@@ -96,6 +103,8 @@ exports.createTicket = (req, res) => {
       })
       .on('error', console.log)
       .on('receipt', console.log);
+  }).catch((err) => {
+    console.log(err);
   });
 
   // Save to database
@@ -130,13 +139,14 @@ exports.getVillages = (req, res) => {
 
 exports.createVillage = (req, res) => {
   var newVillage = new Village({
-    vid: req.body.vid,
+    // vid: req.body.vid,
     village_name: req.body.village_name,
     village_head: req.body.village_head,
     location: req.body.location,
     photo_url: req.body.photo_url,
     bids: []
   });
+  newVillage.vid = newVillage._id.toString();
 
   newVillage.save((err, village) => {
     if (err) return res.send(err);
@@ -153,13 +163,15 @@ exports.getBooths = (req, res) => {
 
 exports.createBooth = (req, res) => {
   var new_booth = new Booth({
-    bid: req.body.bid,
+    // bid: req.body.bid,
     booth_name: req.body.booth_name,
     host: req.body.host,
     starting_date: req.body.starting_date,
     photo_url: req.body.photo_url,
     vid: req.body.vid
   });
+  new_booth.bid = new_booth._id.toString();
+
   new_booth.save((err, booth) => {
     if (err) return res.send(err);
     res.json(booth);
@@ -178,6 +190,7 @@ exports.createEntry = (req, res) => {
     uid: req.body.uid,
     bid: req.body.bid
   });
+
   newEntry.save((err, entry) => {
     if (err) return res.send(err);
     res.json(entry);

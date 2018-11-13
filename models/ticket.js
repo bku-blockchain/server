@@ -21,6 +21,9 @@ const TicketSchema = new Schema({
     type: String,
     unique: true,
     default: 'https://ropsten.etherscan.io'
+  },
+  txHash: {
+    type: String
   }
 });
 
