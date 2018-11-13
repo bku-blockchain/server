@@ -4,6 +4,7 @@ import * as UserCtrl from './user';
 import * as RecordCtrl from './record';
 import * as PollCtrl from './poll';
 import * as VoteCtrl from './vote';
+import * as TicketCtrl from './ticket';
 
 export {
   AdminCtrl,
@@ -11,5 +12,6 @@ export {
   UserCtrl,
   RecordCtrl,
   PollCtrl,
-  VoteCtrl
+  VoteCtrl,
+  TicketCtrl
 };

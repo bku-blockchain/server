@@ -8,6 +8,7 @@ import contact from './contact';
 import record from './record';
 import poll from './poll';
 import vote from './vote';
+import ticket from './ticket';
 
 const router = express.Router();
 
@@ -22,5 +23,6 @@ router.use('/api/contact', contact);
 router.use('/api/record', record);
 router.use('/api/poll', poll);
 router.use('/api/vote', vote);
+router.use('/api/ticket', ticket);
 
 export default router;
