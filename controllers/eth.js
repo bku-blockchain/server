@@ -189,8 +189,6 @@ export const createVoting = async ({ vote, contractAddress, secretKey, userID, h
 
     const { address, index, nonce } = await initAccount();
 
-    console.log('Gas limit:', gasLimit);
-
     txInstance.send({
       from: address,
       gas: gasLimit,

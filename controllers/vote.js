@@ -69,6 +69,8 @@ export const create = async (req, res, next) => {
       return res.status(400).send({ message: 'Smart Contract is not created' });
     }
 
+    console.log('Contract Address:', poll.eth.contractAddress);
+
     /** Check valid ballots */
     const minBallots = [...ballots].filter(x => poll.candidates.filter(i => i.id == x.id).length > 0);
     if (minBallots.length == 0) {
