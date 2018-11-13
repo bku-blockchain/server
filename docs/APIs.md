@@ -168,9 +168,17 @@ Add a contact
 
 
 #### GET /api/record - DONE
-Get contacts
+Get records of current user
 
 `[ {record1}, {record2} ]`
+
+#### GET /api/record/:partnerID - DONE
+Get records of current user with other partner by ID
+
+`[ {record1}, {record2} ]`
+
+Example:
+
 
 Example:
 
