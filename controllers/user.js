@@ -101,3 +101,8 @@ export const getContacts = async (req, res, next) => {
     res.status(400).send({ message: err.message });
   }
 };
+
+export const uploadAvatar = async (req, res, next) => {
+  console.log(req.file);
+  res.send(req.file);
+};
