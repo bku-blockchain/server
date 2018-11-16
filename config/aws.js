@@ -1,3 +1,7 @@
+/**
+ * Dont use AWS S3
+ */
+
 module.exports = {
   AccessKeyID: process.env.AWS_ACCESS_KEY_ID || 'YOUR AWS ACCESS KEY',
   SecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || 'YOUR AWS SecretAccessKey',

@@ -1,5 +1,6 @@
 # tmp files
 tmp/
+upload/
 
 # Logs
 logs

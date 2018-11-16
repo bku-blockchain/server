@@ -1,3 +1,8 @@
+/**
+ * Don't use AWS S3
+ */
+
+
 import mongoose from 'mongoose';
 import AWS from 'aws-sdk';
 import fs from 'fs';
@@ -7,34 +12,33 @@ import * as config from '../config';
 
 const User = mongoose.model('User');
 
+
 AWS.config.update({
   accessKeyId: config.aws.AccessKeyID,
   secretAccessKey: config.aws.SecretAccessKey
 });
 
 
-export const uploadAvatar = (id, file) => {
-  if (!file || !file.name || !file.path) {
-    return new Promise.reject({ errorMessage: 'File is not exist or file is wrong' });
-  }
+console.log('AWS:');
+console.log('Access Key ID:', config.aws.AccessKeyID);
+console.log('Secret Access Key:', config.aws.SecretAccessKey);
 
-  const SIZE_5_MB = 5 * 1024 * 1024;
-  if (file.size > SIZE_5_MB) {
-    return new Promise.reject({ errorMessage: 'File must have size smaller or equal 5MB' });
-  }
-
+/**
+ * @param {*} id: userID
+ * @param {*} file: { originalname, path, ext, filename }
+ */
+export const uploadAvatar = async (id, file, cb) => {
   var stream = fs.createReadStream(file.path);
-  var s3 = new AWS.S3({ signatureVersion: 'v2' }); // fix bug can't upload image on the first time submit
-  var type = file.type.split('/')[1];
+  var s3 = new AWS.S3({ signatureVersion: 'v4' }); // fix bug can't upload image on the first time submit
   s3.putObject({
     Bucket: config.aws.S3Bucket,
     ACL: 'public-read', // access control list
-    Key: `most/user/${id}/${Date.now() / 1000}_${file.name}`,
+    Key: `most/user/${id}/${Math.floor(Date.now() / 1000)}_${file.name}`,
     Body: stream
   }, (err, data) => {
-    if (err) {
-      return new Promise.reject({ errorMessage: 'Error when upload file to S3' });
-    }
-    return Promise.resolve(data);
+    if (err) return cb(err);
+    return cb(null, {
+      url: `most/user/${id}/${Math.floor(Date.now() / 1000)}_${file.name}`
+    });
   });
 };

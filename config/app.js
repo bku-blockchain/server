@@ -12,5 +12,7 @@ module.exports = {
   email: {
     address: process.env.EMAIL_ADDRESS || 'server email address',
     password: process.env.EMAIL_PASSWORD || 'server email password'
-  }
+  },
+
+  staticURL: 'http://static.most.bkchain.tk'
 };

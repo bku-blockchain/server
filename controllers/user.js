@@ -53,6 +53,18 @@ export const updateUserInfo = async (req, res, next) => {
   }
 };
 
+export const updateUserAvatar = async (req, res, next) => {
+  const { userID } = req;
+  const { url } = req.file;
+  try {
+    await User.findByIdAndUpdate(userID, { photoUrl: url });
+    return res.status(202).send({ message: 'Upload avatar successfully' });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: err.message });
+  }
+};
+
 export const addContact = async (req, res, next) => {
   const { userID } = req;
   const { partnerID } = req.body;
@@ -100,9 +112,4 @@ export const getContacts = async (req, res, next) => {
     console.log(err);
     res.status(400).send({ message: err.message });
   }
-};
-
-export const uploadAvatar = async (req, res, next) => {
-  console.log(req.file);
-  res.send(req.file);
 };
