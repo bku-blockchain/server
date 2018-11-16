@@ -9,7 +9,7 @@ import * as config from '../config';
 const router = express.Router();
 
 const upload = multer({
-  dest: path.join(__dirname, '../upload/')
+  dest: path.join(__dirname, '../public/upload/')
 });
 
 import { UserCtrl } from '../controllers';
