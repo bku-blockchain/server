@@ -13,18 +13,18 @@ import ticket from './ticket';
 const router = express.Router();
 
 /** Routes for fake database, only enabled when environment is set */
-router.use('/api/test', test);
-router.use('/api/admin', admin);
+router.use('/test', test);
+router.use('/admin', admin);
 
 /** TODO: Deadline !!!, don't check token */
-router.use('/api/ticket', ticket);
+router.use('/ticket', ticket);
 
-router.use('/api', auth);
+router.use('/', auth);
 
-router.use('/api/user', user);
-router.use('/api/contact', contact);
-router.use('/api/record', record);
-router.use('/api/poll', poll);
-router.use('/api/vote', vote);
+router.use('/user', user);
+router.use('/contact', contact);
+router.use('/record', record);
+router.use('/poll', poll);
+router.use('/vote', vote);
 
 export default router;

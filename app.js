@@ -28,7 +28,7 @@ app.use('/', routes);
 
 // redirect other path to ./build
 app.get('*', (req, res, next) => {
-  res.sendFile(path.join(__dirname, './views/index.html'));
+  res.redirect('/');
 });
 
 // catch 404 and forward to error handler
@@ -49,7 +49,7 @@ app.use((err, req, res, next) => {
 });
 
 
-const port = process.env.PORT || '4200';
+const port = process.env.PORT || '8001';
 app.set('port', port);
 
 const server = http.createServer(app);
