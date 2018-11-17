@@ -5,8 +5,10 @@ const Schema = mongoose.Schema;
 const InterestSchema = new Schema({
   uid: {
     type: String,
-    unique: true,
     required: true
+  },
+  eventID: {
+    type: String
   },
   checks: [{
     type: Boolean,
