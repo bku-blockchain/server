@@ -1,5 +1,10 @@
 # MoST - Server
 
++ API endpoint: http://api.most.bkchain.tk/
++ Dashboard: http://admin.most.bkchain.tk/
++ Old dashboard: http://most.bkchain.tk/
++ Static files for upload: http://static.most.bkchain.tk/
+
 ## Quickstart
 
 + Clone repository, installing packages with `npm` or `yarn`

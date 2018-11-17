@@ -2,6 +2,8 @@
 
 Postman: https://documenter.getpostman.com/view/2583401/RzZ9FK8g#d4ab59eb-1621-c05f-7482-d6d506c19988
 
+API URL is: http://api.most.bkchain.tk/
+
 ## APIs
 
 APIs with error format:
@@ -14,7 +16,7 @@ APIs with error format:
 
 ### Not Authenticated
 
-#### POST /api/login - DONE
+#### POST /login - DONE
 
 + Body: `{ username, password }`
 + Response: `{ user, token, tokenExpire, tokenIssuedAt }`
@@ -47,10 +49,10 @@ Example
 }
 ```
 
-#### POST /api/forgot
+#### POST /forgot
 TODO
 
-#### POST /api/create - DONE
+#### POST /create - DONE
 
 + Body: `{ username, email, password, tel, ?firstName, ?lastName, ?photoUrl, ?company, ?position }`
 
@@ -65,15 +67,15 @@ TODO
 #### Test APIs
 Only support with enable environment secret key, add `secret-key` to headers
 
-##### POST /api/test/fake/user - DONE
+##### POST /test/fake/user - DONE
 + Body: `Object`
 + Response: `{ user }`
 
-##### POST /api/test/fake/contact
+##### POST /test/fake/contact
 + Body: `{ userID, contacts: [userID] }`
 + Use scripts to fake
 
-##### POST /api/test/fake/record
+##### POST /test/fake/record
 + Body: `{ userID, partnerID, note, time }`
 + Response: `{ record }`
 + Use scripts to fake
@@ -87,7 +89,7 @@ To use the following APIs, should add token in body, query or headers to use. To
 + Use `query (?token=)`
 + Use `body [token=]`
 
-#### GET /api/authenticated - DONE
+#### GET /authenticated - DONE
 Test user is authenticated.
 
 ```json
@@ -96,7 +98,7 @@ Test user is authenticated.
 }
 ```
 
-#### POST /api/reset - DONE
+#### POST /reset - DONE
 Reset password
 
 + Body: `{ oldPassword, newPassword }`
@@ -116,29 +118,29 @@ Error:
 }
 ```
 
-#### GET /api/logout - DONE
+#### GET /logout - DONE
 ```json
 {
     "message": "Logout successfully"
 }
 ```
 
-#### GET /api/user - DONE
+#### GET /user - DONE
 Get users list
 
 `[ {user1}, {user2} ]`
 
-#### GET /api/user/id/:id - DONE
+#### GET /user/id/:id - DONE
 Get user by id
 
 `{ user }`
 
-#### GET /api/user/:username - DONE
+#### GET /user/:username - DONE
 Get user by username
 
 `{ user }`
 
-#### PUT /api/user - DONE
+#### PUT /user - DONE
 Update user
 
 + Body: `{ firstName, lastName, company, position }`
@@ -150,12 +152,12 @@ Update user
 }
 ```
 
-#### GET /api/contact - DONE
+#### GET /contact - DONE
 Get contacts
 
 `[ {user1}, {user2} ]`
 
-#### POST /api/contact - DONE
+#### POST /contact - DONE
 Add a contact
 
 + Body: `{ partnerID: String }`
@@ -167,12 +169,12 @@ Add a contact
 ```
 
 
-#### GET /api/record - DONE
+#### GET /record - DONE
 Get records of current user
 
 `[ {record1}, {record2} ]`
 
-#### GET /api/record/:partnerID - DONE
+#### GET /record/:partnerID - DONE
 Get records of current user with other partner by ID
 
 `[ {record1}, {record2} ]`
@@ -216,7 +218,7 @@ Example:
 ]
 ```
 
-#### POST /api/record - DONE
+#### POST /record - DONE
 Add a record
 
 + Body: `{ partnerID: String, note: String }`
@@ -233,13 +235,13 @@ Add a record
 
 
 
-#### GET /api/poll - DONE
+#### GET /poll - DONE
 Get list of current polls, recently start
 
-#### GET /api/poll/past - DONE
+#### GET /poll/past - DONE
 Get list of past polls, recently end
 
-#### GET /api/poll/future - DONE
+#### GET /poll/future - DONE
 Get list of future polls, coming soon
 
 `[ { poll_1 }, { poll_2 }, { poll_3 } ]`
@@ -311,13 +313,13 @@ Examples
 ]
 ```
 
-#### GET /api/poll/:id - DONE
+#### GET /poll/:id - DONE
 Get poll by ID
 
 `{ poll }` poll such as above example
 
 
-#### POST /api/poll
+#### POST /poll
 Create new poll, deploy new smart contract
 
 + Body: `{ eventID, ownerID, title, description, startDate, endDate, candidates }`
@@ -328,23 +330,23 @@ Create new poll, deploy new smart contract
 
 
 
-#### GET /api/vote
+#### GET /vote
 Get votes list
 
 `[ { vote1 }, { vote2 } ]`
 
-#### GET /api/vote/:pollID
+#### GET /vote/:pollID
 Get votes in a poll
 
 `[ { vote1 }, { vote2 } ]`
 
-#### GET /api/vote/:pollID/:userID
+#### GET /vote/:pollID/:userID
 Get vote of a user in a poll
 
 `{ vote2 }`
 
 
-#### POST /api/vote
+#### POST /vote
 Create new vote, send transaction to smart contract
 
 + Body: `{ pollID, ballots }` with `ballots: [ { id: String }, ... ]`
