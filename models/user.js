@@ -56,6 +56,11 @@ const UserSchema = new Schema({
     type: String,
     default: ''
   },
+  role: {
+    type: String,
+    enum: ['Investor', 'Expert', 'Speaker', 'Organizer', 'Participant'],
+    default: 'Participant'
+  },
   password: {
     type: String,
     default: ''
