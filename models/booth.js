@@ -27,7 +27,18 @@ const BoothSchema = new Schema({
   vid: {
     type: String,
     required: true
-  }
+  },
+  rating: [{
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    star: {
+      type: Number,
+      min: 1,
+      max: 5
+    }
+  }]
 });
 
 mongoose.model('Booth', BoothSchema);

@@ -24,10 +24,10 @@ const VillageSchema = new Schema({
     type: String,
     required: true
   },
-  bids: [{
-    type: String,
-    required: true
-  }]
+  event: {
+    type: Schema.Types.ObjectId,
+    ref: 'Event'
+  }
 });
 
 mongoose.model('Village', VillageSchema);

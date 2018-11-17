@@ -13,5 +13,6 @@ mongoose.connect(db.uriMongo, { useNewUrlParser: true, useCreateIndex: true }, (
   // Define models Mongoose
   require('../../models');
 
-  require('./fixUserRole');
+  // require('./fixUserRole');
+  require('./fixEventVillageBooth');
 });
