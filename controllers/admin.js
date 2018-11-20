@@ -5,6 +5,9 @@ const User = mongoose.model('User');
 const Poll = mongoose.model('Poll');
 const Record = mongoose.model('Record');
 const Vote = mongoose.model('Vote');
+const Event = mongoose.model('Event');
+const Village = mongoose.model('Village');
+const Booth = mongoose.model('Booth');
 
 
 export const getAllUsers = async (req, res, next) => {
@@ -32,6 +35,36 @@ export const getAllVotes = async (req, res, next) => {
   try {
     const votes = await Vote.find().populate('pollID');
     return res.status(200).send(votes);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: err.message });
+  }
+};
+
+export const getAllEvents = async (req, res, next) => {
+  try {
+    const events = await Event.find();
+    return res.status(200).send(events);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: err.message });
+  }
+};
+
+export const getAllBooths = async (req, res, next) => {
+  try {
+    const booths = await Booth.find();
+    return res.status(200).send(booths);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: err.message });
+  }
+};
+
+export const getAllVillages = async (req, res, next) => {
+  try {
+    const villages = await Village.find().populate('event');
+    return res.status(200).send(villages);
   } catch (err) {
     console.log(err);
     res.status(400).send({ message: err.message });
