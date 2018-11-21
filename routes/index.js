@@ -9,6 +9,7 @@ import record from './record';
 import poll from './poll';
 import vote from './vote';
 import ticket from './ticket';
+import report from './report';
 
 const router = express.Router();
 
@@ -26,5 +27,6 @@ router.use('/contact', contact);
 router.use('/record', record);
 router.use('/poll', poll);
 router.use('/vote', vote);
+router.use('/report', report);
 
 export default router;
