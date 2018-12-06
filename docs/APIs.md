@@ -2,7 +2,7 @@
 
 Postman: https://documenter.getpostman.com/view/2583401/RzZ9FK8g#d4ab59eb-1621-c05f-7482-d6d506c19988
 
-API URL is: http://api.most.bkchain.tk/
+API URL is: http://api.lab.bkchain.tk/
 
 ## APIs
 
