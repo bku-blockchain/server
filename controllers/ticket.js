@@ -42,77 +42,83 @@ exports.getTicketByID = (req, res) => {
 };
 
 exports.createTicket = (req, res) => {
-  console.log(req.body.uid);
-  const newTicket = new Ticket({
-    uid: req.body.uid
-  });
-  console.log(newTicket);
+  Ticket.findOne({ uid: req.params.uid }, (err, ticket) => {
+    if (err) return res.send(err);
+    // if ticket already exists return the ticket instead of creating a new one
+    if (ticket) return res.json(ticket);
 
-  // Generate Ticket ID
-  newTicket.tid = keccak256(newTicket.uid + newTicket.created_date + uniqid());
-
-  console.log('Create new ticket:', newTicket.tid);
-  console.log('User ID:', newTicket.uid);
-  console.log('Ticket:', newTicket);
-
-  // Execute contract
-  const uid = `0x${Buffer.from(newTicket.uid, 'utf8').toString('hex')}`;
-  const tid = `0x${newTicket.tid}`;
-
-  let count;
-  web3js.eth.getTransactionCount(myAddress).then((v) => {
-    console.log(`Count: ${v}`);
-    count = v;
-    const amount = web3js.utils.toHex(1e16);
-    // creating raw tranaction
-    const rawTransaction = {
-      from: myAddress,
-      gasPrice: web3js.utils.toHex(20 * 1e9),
-      gasLimit: web3js.utils.toHex(210000),
-      to: ticketContractAddress,
-      value: '0x0',
-      data: ticketContract.methods.AllocateTicket(uid, tid).encodeABI(),
-      nonce: web3js.utils.toHex(count)
-    };
-
-    // console.log(rawTransaction);
-    // creating transaction via ethereumjs-tx
-    const transaction = new Tx(rawTransaction);
-    // signing transaction with private key
-    transaction.sign(privateKey);
-    // sending transacton via web3js module
-    web3js.eth.sendSignedTransaction(`0x${transaction.serialize().toString('hex')}`)
-      .on('transactionHash', (txRes) => {
-        console.log(`Transaction hash: ${txRes}`);
-        const url = `https://ropsten.etherscan.io/tx/${txRes}#eventlog`;
-
-        newTicket.etherscan_url = url;
-        Ticket.findOneAndUpdate({
-          tid: newTicket.tid
-        }, {
-          $set: {
-            etherscan_url: url,
-            txHash: txRes
-          }
-        }, {
-          new: true
-        }, (err, ticket) => {
-          if (err) res.send(err);
-          else res.json(ticket);
-        });
-      })
-      .on('error', console.log)
-      .on('receipt', console.log);
-  }).catch((err) => {
-    console.log(err);
-  });
-
-  // Save to database
-  newTicket.save((err) => {
-    if (err) {
+    console.log(req.body.uid);
+    const newTicket = new Ticket({
+      uid: req.body.uid
+    });
+    console.log(newTicket);
+  
+    // Generate Ticket ID
+    newTicket.tid = keccak256(newTicket.uid + newTicket.created_date + uniqid());
+  
+    console.log('Create new ticket:', newTicket.tid);
+    console.log('User ID:', newTicket.uid);
+    console.log('Ticket:', newTicket);
+  
+    // Execute contract
+    const uid = `0x${Buffer.from(newTicket.uid, 'utf8').toString('hex')}`;
+    const tid = `0x${newTicket.tid}`;
+  
+    let count;
+    web3js.eth.getTransactionCount(myAddress).then((v) => {
+      console.log(`Count: ${v}`);
+      count = v;
+      const amount = web3js.utils.toHex(1e16);
+      // creating raw tranaction
+      const rawTransaction = {
+        from: myAddress,
+        gasPrice: web3js.utils.toHex(20 * 1e9),
+        gasLimit: web3js.utils.toHex(210000),
+        to: ticketContractAddress,
+        value: '0x0',
+        data: ticketContract.methods.AllocateTicket(uid, tid).encodeABI(),
+        nonce: web3js.utils.toHex(count)
+      };
+  
+      // console.log(rawTransaction);
+      // creating transaction via ethereumjs-tx
+      const transaction = new Tx(rawTransaction);
+      // signing transaction with private key
+      transaction.sign(privateKey);
+      // sending transacton via web3js module
+      web3js.eth.sendSignedTransaction(`0x${transaction.serialize().toString('hex')}`)
+        .on('transactionHash', (txRes) => {
+          console.log(`Transaction hash: ${txRes}`);
+          const url = `https://ropsten.etherscan.io/tx/${txRes}#eventlog`;
+  
+          newTicket.etherscan_url = url;
+          Ticket.findOneAndUpdate({
+            tid: newTicket.tid
+          }, {
+            $set: {
+              etherscan_url: url,
+              txHash: txRes
+            }
+          }, {
+            new: true
+          }, (err, ticket) => {
+            if (err) res.send(err);
+            else res.json(ticket);
+          });
+        })
+        .on('error', console.log)
+        .on('receipt', console.log);
+    }).catch((err) => {
       console.log(err);
-      return res.send(err);
-    }
+    });
+  
+    // Save to database
+    newTicket.save((err) => {
+      if (err) {
+        console.log(err);
+        return res.send(err);
+      }
+    });
   });
 };
 
