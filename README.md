@@ -1,9 +1,9 @@
-# MoST - Server
+# Server
 
-+ API endpoint: http://api.most.bkchain.tk/
-+ Dashboard: http://admin.most.bkchain.tk/
-+ Old dashboard: http://most.bkchain.tk/
-+ Static files for upload: http://static.most.bkchain.tk/
++ API endpoint: http://api.lab.bkchain.tk/
++ Dashboard: http://admin.lab.bkchain.tk/
++ Old dashboard: http://lab.bkchain.tk/
++ Static files for upload: http://static.lab.bkchain.tk/
 
 ## Quickstart
 
