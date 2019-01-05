@@ -52,18 +52,18 @@ exports.createTicket = (req, res) => {
       uid: req.body.uid
     });
     console.log(newTicket);
-  
+
     // Generate Ticket ID
     newTicket.tid = keccak256(newTicket.uid + newTicket.created_date + uniqid());
-  
+
     console.log('Create new ticket:', newTicket.tid);
     console.log('User ID:', newTicket.uid);
     console.log('Ticket:', newTicket);
-  
+
     // Execute contract
     const uid = `0x${Buffer.from(newTicket.uid, 'utf8').toString('hex')}`;
     const tid = `0x${newTicket.tid}`;
-  
+
     let count;
     web3js.eth.getTransactionCount(myAddress).then((v) => {
       console.log(`Count: ${v}`);
@@ -79,7 +79,7 @@ exports.createTicket = (req, res) => {
         data: ticketContract.methods.AllocateTicket(uid, tid).encodeABI(),
         nonce: web3js.utils.toHex(count)
       };
-  
+
       // console.log(rawTransaction);
       // creating transaction via ethereumjs-tx
       const transaction = new Tx(rawTransaction);
@@ -90,7 +90,7 @@ exports.createTicket = (req, res) => {
         .on('transactionHash', (txRes) => {
           console.log(`Transaction hash: ${txRes}`);
           const url = `https://ropsten.etherscan.io/tx/${txRes}#eventlog`;
-  
+
           newTicket.etherscan_url = url;
           Ticket.findOneAndUpdate({
             tid: newTicket.tid
@@ -111,7 +111,7 @@ exports.createTicket = (req, res) => {
     }).catch((err) => {
       console.log(err);
     });
-  
+
     // Save to database
     newTicket.save((err) => {
       if (err) {
