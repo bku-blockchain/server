@@ -16,6 +16,8 @@
 
 View `docs/APIs.md`
 
+On postman: https://documenter.getpostman.com/view/2583401/RzZ9FK8g
+
 
 ## Notes
 
