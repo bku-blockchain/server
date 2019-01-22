@@ -8,6 +8,7 @@ import contact from './contact';
 import record from './record';
 import poll from './poll';
 import vote from './vote';
+import event from './event';
 import ticket from './ticket';
 import report from './report';
 
@@ -17,9 +18,6 @@ const router = express.Router();
 router.use('/test', test);
 router.use('/admin', admin);
 
-/** TODO: Deadline !!!, don't check token */
-router.use('/ticket', ticket);
-
 router.use('/', auth);
 
 router.use('/user', user);
@@ -27,6 +25,8 @@ router.use('/contact', contact);
 router.use('/record', record);
 router.use('/poll', poll);
 router.use('/vote', vote);
+router.use('/event', event);
+router.use('/ticket', ticket);
 router.use('/report', report);
 
 export default router;

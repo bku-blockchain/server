@@ -5,7 +5,7 @@ const router = express.Router();
 import { VoteCtrl } from '../controllers';
 
 /**
- * Prefix /api/vote/
+ * Prefix /vote/
  */
 
 router.get('/', VoteCtrl.findAll);

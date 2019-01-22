@@ -6,7 +6,7 @@ const router = express.Router();
 import { ReportCtrl } from '../controllers';
 
 /**
- * Prefix /api/report/
+ * Prefix /report/
  */
 
 router.get('/num_booths_each_star', ReportCtrl.statisticNumBoothsEachStar);

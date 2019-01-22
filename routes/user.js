@@ -15,7 +15,7 @@ const upload = multer({
 import { UserCtrl } from '../controllers';
 
 /**
- * Prefix /api/user/
+ * Prefix /user/
  */
 
 router.get('/', UserCtrl.findAll);

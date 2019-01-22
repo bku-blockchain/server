@@ -8,11 +8,12 @@ const InterestSchema = new Schema({
     required: true
   },
   eventID: {
-    type: String
-  },
-  checks: [{
-    type: Boolean,
+    type: String,
     required: true
+  },
+  villages: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Village'
   }]
 });
 

@@ -14,5 +14,12 @@ module.exports = {
     password: process.env.EMAIL_PASSWORD || 'server email password'
   },
 
-  staticURL: 'http://static.most.bkchain.tk'
+  staticURL: 'http://static.most.bkchain.tk',
+
+  admin: {
+    username: process.env.ADMIN_USERNAME,
+    password: process.env.ADMIN_PASSWORD,
+    secretKey: process.env.ADMIN_SECRET_KEY || 'admin server secret key',
+    tokenExpire: ONE_HOUR
+  }
 };

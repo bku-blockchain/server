@@ -5,7 +5,7 @@ const router = express.Router();
 import { AuthCtrl } from '../controllers';
 
 /**
- * Prefix: /api/
+ * Prefix: /
  */
 
 router.post('/login', AuthCtrl.login);

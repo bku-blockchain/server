@@ -5,7 +5,7 @@ const router = express.Router();
 import { UserCtrl } from '../controllers';
 
 /**
- * Prefix /api/contact/
+ * Prefix /contact/
  */
 
 router.get('/', UserCtrl.getContacts);

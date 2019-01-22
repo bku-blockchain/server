@@ -10,7 +10,10 @@ const TicketSchema = new Schema({
   },
   uid: {
     type: String,
-    unique: true,
+    required: true
+  },
+  eventID: {
+    type: String,
     required: true
   },
   created_date: {

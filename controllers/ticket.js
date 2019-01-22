@@ -19,46 +19,58 @@ console.log('ETH Private Key Ticket:', privateKey);
 
 const
   Ticket = mongoose.model('Ticket'),
-  Event = mongoose.model('Event'),
-  Village = mongoose.model('Village'),
-  Booth = mongoose.model('Booth'),
-  Entry = mongoose.model('Entry'),
-  Interest = mongoose.model('Interest');
+  Entry = mongoose.model('Entry');
 
-exports.getTickets = (req, res) => {
-  Ticket.find({}, (err, ticket) => {
+export const getMyTicketByEventID = (req, res) => {
+  const { eventID } = req.params;
+  Ticket.findOne({ uid: req.userID, eventID })
+    .then(ticket => res.status(200).send(ticket))
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({ message: err.message });
+    });
+};
+
+export const getTickets = (req, res) => {
+  Ticket.find({}, (err, tickets) => {
     if (err) {
       return res.send(err);
     }
-    res.json(ticket);
+    res.json(tickets);
   });
 };
 
-exports.getTicketByID = (req, res) => {
+export const getTicketByID = (req, res) => {
   Ticket.findOne({ tid: req.params.tid }, (err, ticket) => {
     if (err) return res.send(err);
     res.json(ticket);
   });
 };
 
-exports.createTicket = (req, res) => {
+export const getTicketsByUserID = (req, res) => {
   Ticket.findOne({ uid: req.params.uid }, (err, ticket) => {
     if (err) return res.send(err);
-    // if ticket already exists return the ticket instead of creating a new one
+    res.json(ticket);
+  });
+};
+
+export const createTicket = (req, res) => {
+  const { eventID } = req.params;
+  const { userID } = req;
+  Ticket.findOne({ uid: userID, eventID }, (err, ticket) => {
+    if (err) {
+      console.log(err);
+      return res.send(err);
+    }
+
     if (ticket) return res.json(ticket);
 
-    console.log(req.body.uid);
     const newTicket = new Ticket({
-      uid: req.body.uid
+      uid: userID,
+      eventID
     });
-    console.log(newTicket);
 
-    // Generate Ticket ID
     newTicket.tid = keccak256(newTicket.uid + newTicket.created_date + uniqid());
-
-    console.log('Create new ticket:', newTicket.tid);
-    console.log('User ID:', newTicket.uid);
-    console.log('Ticket:', newTicket);
 
     // Execute contract
     const uid = `0x${Buffer.from(newTicket.uid, 'utf8').toString('hex')}`;
@@ -66,10 +78,7 @@ exports.createTicket = (req, res) => {
 
     let count;
     web3js.eth.getTransactionCount(myAddress).then((v) => {
-      console.log(`Count: ${v}`);
       count = v;
-      const amount = web3js.utils.toHex(1e16);
-      // creating raw tranaction
       const rawTransaction = {
         from: myAddress,
         gasPrice: web3js.utils.toHex(20 * 1e9),
@@ -80,28 +89,29 @@ exports.createTicket = (req, res) => {
         nonce: web3js.utils.toHex(count)
       };
 
-      // console.log(rawTransaction);
+      console.log('Creating Ticket: ', rawTransaction);
+
       // creating transaction via ethereumjs-tx
       const transaction = new Tx(rawTransaction);
+
       // signing transaction with private key
       transaction.sign(privateKey);
+
+      console.log('Transaction: ', transaction);
+
       // sending transacton via web3js module
       web3js.eth.sendSignedTransaction(`0x${transaction.serialize().toString('hex')}`)
         .on('transactionHash', (txRes) => {
-          console.log(`Transaction hash: ${txRes}`);
+          console.log(`Transaction Hash: ${txRes}`);
           const url = `https://ropsten.etherscan.io/tx/${txRes}#eventlog`;
 
           newTicket.etherscan_url = url;
-          Ticket.findOneAndUpdate({
-            tid: newTicket.tid
-          }, {
+          Ticket.findOneAndUpdate({ tid: newTicket.tid }, {
             $set: {
               etherscan_url: url,
               txHash: txRes
             }
-          }, {
-            new: true
-          }, (err, ticket) => {
+          }, { new: true }, (err, ticket) => {
             if (err) res.send(err);
             else res.json(ticket);
           });
@@ -122,76 +132,14 @@ exports.createTicket = (req, res) => {
   });
 };
 
-exports.getTicketByUserID = (req, res) => {
-  Ticket.findOne({ uid: req.params.uid }, (err, ticket) => {
-    if (err) return res.send(err);
-    res.json(ticket);
-  });
-};
-
-exports.getEvents = (req, res) => {
-  Event.find({}, (err, event) => {
-    if (err) return res.send(err);
-    res.json(event);
-  });
-};
-
-exports.getVillages = (req, res) => {
-  Village.find({}, (err, village) => {
-    if (err) return res.send(err);
-    res.json(village);
-  });
-};
-
-exports.createVillage = (req, res) => {
-  var newVillage = new Village({
-    // vid: req.body.vid,
-    village_name: req.body.village_name,
-    village_head: req.body.village_head,
-    location: req.body.location,
-    photo_url: req.body.photo_url,
-    bids: []
-  });
-  newVillage.vid = newVillage._id.toString();
-
-  newVillage.save((err, village) => {
-    if (err) return res.send(err);
-    res.json(village);
-  });
-};
-
-exports.getBooths = (req, res) => {
-  Booth.find({}, (err, booth) => {
-    if (err) return res.send(err);
-    res.json(booth);
-  });
-};
-
-exports.createBooth = (req, res) => {
-  var new_booth = new Booth({
-    // bid: req.body.bid,
-    booth_name: req.body.booth_name,
-    host: req.body.host,
-    starting_date: new Date(req.body.starting_date),
-    photo_url: req.body.photo_url,
-    vid: req.body.vid
-  });
-  new_booth.bid = new_booth._id.toString();
-
-  new_booth.save((err, booth) => {
-    if (err) return res.send(err);
-    res.json(booth);
-  });
-};
-
-exports.getEntries = (req, res) => {
+export const getEntries = (req, res) => {
   Entry.find({}, (err, entry) => {
     if (err) return res.send(err);
     res.json(entry);
   });
 };
 
-exports.createEntry = (req, res) => {
+export const createEntry = (req, res) => {
   const newEntry = new Entry({
     uid: req.body.uid,
     bid: req.body.bid
@@ -200,41 +148,5 @@ exports.createEntry = (req, res) => {
   newEntry.save((err, entry) => {
     if (err) return res.send(err);
     res.json(entry);
-  });
-};
-
-exports.getAllInterests = (req, res) => {
-  Interest.find({}, (err, interests) => {
-    if (err) return res.send(err);
-    res.json(interests);
-  });
-};
-
-exports.createInterest = (req, res) => {
-  const newInterest = new Interest({
-    uid: req.body.uid,
-    checks: req.body.checks
-  });
-  newInterest.save((err, interest) => {
-    if (err) return res.send(err);
-    res.json(interest);
-  });
-};
-
-exports.getInterestByUserID = (req, res) => {
-  Interest.findOne({ uid: req.params.uid }, (err, interest) => {
-    if (err) return res.send(err);
-    res.json(interest);
-  });
-};
-
-exports.updateInterest = (req, res) => {
-  Interest.updateOne({ uid: req.params.uid }, {
-    checks: req.body.checks
-  }, {
-    new: true
-  }, (err, interest) => {
-    if (err) return res.send(err);
-    res.json(interest);
   });
 };

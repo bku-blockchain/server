@@ -5,7 +5,7 @@ const router = express.Router();
 import { PollCtrl } from '../controllers';
 
 /**
- * Prefix /api/poll/
+ * Prefix /poll/
  */
 
 router.get('/', PollCtrl.findCurrentPolls);

@@ -5,7 +5,7 @@ const router = express.Router();
 import { RecordCtrl } from '../controllers';
 
 /**
- * Prefix /api/record/
+ * Prefix /record/
  */
 
 router.get('/', RecordCtrl.getRecords);

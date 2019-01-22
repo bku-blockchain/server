@@ -7,7 +7,7 @@ export default router;
 import { AuthCtrl, UserCtrl, RecordCtrl } from '../controllers';
 
 /**
- * Prefix /api/test/
+ * Prefix /test/
  */
 
 router.post('/fake/user', AuthCtrl.fakeUser);

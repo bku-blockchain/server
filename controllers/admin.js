@@ -1,5 +1,6 @@
 import mongoose, { SchemaType, SchemaTypes } from 'mongoose';
 import async from 'async';
+import jwt from 'jsonwebtoken';
 
 const User = mongoose.model('User');
 const Poll = mongoose.model('Poll');
@@ -9,6 +10,49 @@ const Event = mongoose.model('Event');
 const Village = mongoose.model('Village');
 const Booth = mongoose.model('Booth');
 
+import config from '../config';
+
+export const login = async (req, res, next) => {
+  const { username, password } = req.body;
+  const { admin } = config.app;
+  if (username != admin.username || password != admin.password) {
+    return res.status(404).send({ message: 'Admin authentication is wrong' });
+  }
+  const payload = { };
+  jwt.sign(payload, admin.secretKey, {
+    expiresIn: admin.tokenExpire
+  }, async (err, token) => {
+    if (err) {
+      return res.status(500).send({ message: err.message });
+    }
+    const tokenIssuedAt = Math.floor(new Date().getTime() / 1000);
+    const tokenExpire = tokenIssuedAt + config.app.tokenExpire;
+    res.status(200).send({ token, tokenExpire, tokenIssuedAt });
+  });
+};
+
+export async function authorization(req, res, next) {
+  // Accept token in headers (authorization)
+  const token = req.headers.authorization;
+  if (!token) {
+    return res.status(401).send({ message: 'Require authentication token for request.' });
+  }
+  const { admin } = config.app;
+  try {
+    jwt.verify(token, admin.secretKey, async (err, decoded) => {
+      // decoded: { iat: issueAt, exp: expire }
+      if (err) {
+        return res.status(401).send({ message: 'Invalid token for request' });
+      }
+      req.authAdmin = true;
+      next();
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(400).send({ message: err.message });
+  }
+}
 
 export const getAllUsers = async (req, res, next) => {
   try {
